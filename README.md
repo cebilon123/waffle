@@ -12,6 +12,7 @@ we are missing a real modular and open source **Web Application Firewall** that 
 + openssl (if windows, try using git bash)
 
 ### Generate certificates
+Execute make certs_windows and go through process. It should certs in the .cert directory.
 
 ## Planned features / Architecture
 To bo honest, I'm learning how to write WAF from the scratch, so this part will be updated after a while. 
