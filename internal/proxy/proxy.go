@@ -16,7 +16,10 @@ type Server struct {
 }
 
 func NewServer(dns domain.NameSystem, addr string) *Server {
-	return &Server{dns: dns}
+	return &Server{
+		dns:  dns,
+		addr: addr,
+	}
 }
 
 func (s *Server) Start() error {
