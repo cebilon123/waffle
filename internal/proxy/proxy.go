@@ -2,12 +2,16 @@ package proxy
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 
 	"waffle/internal/domain"
+)
+
+const (
+	pathCertFile = ".cert/server.crt"
+	pathKeyFile  = ".cert/server.key"
 )
 
 type Server struct {
@@ -27,7 +31,6 @@ func (s *Server) Start() error {
 
 	handler := func(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
 		return func(w http.ResponseWriter, r *http.Request) {
-			log.Println(r.URL)
 			r.Host = remote.Host
 			w.Header().Set("X-Ben", "Rad")
 			p.ServeHTTP(w, r)
@@ -37,7 +40,8 @@ func (s *Server) Start() error {
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 
 	http.HandleFunc("/", handler(proxy))
-	if err := http.ListenAndServe(s.addr, nil); err != nil {
+
+	if err := http.ListenAndServeTLS(s.addr, pathCertFile, pathKeyFile, nil); err != nil {
 		return fmt.Errorf("start reverse proxy server: %w", err)
 	}
 
