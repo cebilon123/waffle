@@ -17,8 +17,8 @@ import (
 var (
 	ciphers = []uint16{
 		// TLS 1.3
-		tls.TLS_AES_256_GCM_SHA384,
 		tls.TLS_AES_128_GCM_SHA256,
+		tls.TLS_AES_256_GCM_SHA384,
 		tls.TLS_CHACHA20_POLY1305_SHA256,
 
 		// ECDSA is about 3 times faster than RSA on the server side.
@@ -32,6 +32,26 @@ var (
 		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 		tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
 		tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+
+		// Added so all ciphers are available
+
+		tls.TLS_RSA_WITH_RC4_128_SHA,
+		tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
+		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
+		tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+		tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+		tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+		tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+		tls.TLS_FALLBACK_SCSV,
 	}
 
 	http11    = "http/1.1"
@@ -46,11 +66,15 @@ type Server struct {
 	certificateProvider certificate.Provider
 }
 
-func NewServer(dns domain.NameSystem, addr string) *Server {
+func NewServer(
+	dns domain.NameSystem,
+	addr string,
+	certificateProvider certificate.Provider,
+) *Server {
 	return &Server{
 		dns:                 dns,
 		addr:                addr,
-		certificateProvider: certificate.NewLocalCertificatesProvider(nil),
+		certificateProvider: certificateProvider,
 	}
 }
 
