@@ -6,11 +6,19 @@ import (
 
 	cert "waffle/.cert"
 	"waffle/internal/certificate"
+	"waffle/internal/config"
 	"waffle/internal/domain"
 	"waffle/internal/proxy"
 )
 
 func main() {
+	cfg, err := config.LoadEnvironmentConfig()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	log.Println(cfg)
+
 	dns := &domain.MysqlNameSystemProvider{}
 
 	certificateProvider := certificate.NewLocalCertificatesProvider(loadLocalCustomCACerts())
