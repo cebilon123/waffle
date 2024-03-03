@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dns := domain.NewYAMLBasedNameSystem()
+	dns := &domain.MysqlNameSystemProvider{}
 
 	certificateProvider := certificate.NewLocalCertificatesProvider(loadLocalCustomCACerts())
 

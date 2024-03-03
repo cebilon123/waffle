@@ -1,19 +1,9 @@
+// Package domain contains all the code and logic
+// related to working with the internal domain system
 package domain
 
-type NameSystem interface {
-	GetAddress(domain string) (string, error)
-}
-
-// YAMLBasedNameSystem is a DNS based on the configuration
-// passed using YAML config file.
-type YAMLBasedNameSystem struct {
-}
-
-func NewYAMLBasedNameSystem() *YAMLBasedNameSystem {
-	return &YAMLBasedNameSystem{}
-}
-
-func (Y *YAMLBasedNameSystem) GetAddress(domain string) (string, error) {
-	//TODO implement me
-	panic("implement me")
+// NameSystemProvider provides address of the destination for given
+// registered domain.
+type NameSystemProvider interface {
+	GetAddress(host string) (string, error)
 }

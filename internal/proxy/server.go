@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"waffle/internal/handler"
 
 	"waffle/internal/certificate"
 	"waffle/internal/domain"
@@ -61,13 +62,13 @@ var (
 )
 
 type Server struct {
-	dns                 domain.NameSystem
+	dns                 domain.NameSystemProvider
 	addr                string
 	certificateProvider certificate.Provider
 }
 
 func NewServer(
-	dns domain.NameSystem,
+	dns domain.NameSystemProvider,
 	addr string,
 	certificateProvider certificate.Provider,
 ) *Server {
@@ -104,9 +105,7 @@ func (s *Server) Start() error {
 	tcpListener, err := tls.Listen("tcp", s.addr, tlsConfig)
 
 	router := http.NewServeMux()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Welcome to the home page!")
-	})
+	router.HandleFunc("/", handler.RedirectHandler(s.dns))
 
 	server := &http.Server{
 		Handler:           router,
