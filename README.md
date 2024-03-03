@@ -11,6 +11,13 @@ we are missing a real modular and open source **Web Application Firewall** that 
 + make (if windows, try using chocolatey)
 + openssl (if windows, try using git bash)
 
+1. Create certificates and FS embed go file provider `make certs_windows`
+2. Execute `docker compose up -d` to create needed infrastructure
+3. Set environment variables before running the proxy:
+```
+DATABASE_URI=dns:passpass@tcp(localhost:3306)/dns
+```
+
 ### Generate certificates
 Execute make certs_windows and go through process. It should certs in the .cert directory.
 
