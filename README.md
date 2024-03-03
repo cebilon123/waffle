@@ -16,3 +16,6 @@ Execute make certs_windows and go through process. It should certs in the .cert 
 
 ## Planned features / Architecture
 To bo honest, I'm learning how to write WAF from the scratch, so this part will be updated after a while. 
+
+## Education
+[A Comprehensive Examination of Cloudflare's IP-based Distributed Denial of Service Mitigation](https://www.researchgate.net/publication/375238537_A_Comprehensive_Examination_of_Cloudflare%27s_IP-based_Distributed_Denial_of_Service_Mitigation)
