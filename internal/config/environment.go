@@ -8,21 +8,12 @@ import (
 )
 
 type Environment struct {
-	Database database
-	Extras   env.EnvSet
-}
-
-type database struct {
-	URI string `env:"DATABASE_URI"`
+	Extras env.EnvSet
 }
 
 func (e *Environment) Validate() error {
 	errs := make([]error, 0)
-
-	if len(e.Database.URI) == 0 {
-		errs = append(errs, fmt.Errorf("DATABASE_URI is empty"))
-	}
-
+	
 	return errors.Join(errs...)
 }
 
