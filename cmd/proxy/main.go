@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	_ "embed"
 	"log"
 
@@ -10,26 +9,14 @@ import (
 	cert "waffle/.cert"
 	"waffle/internal/certificate"
 	"waffle/internal/config"
-	"waffle/internal/domain"
 	"waffle/internal/proxy"
 )
 
 func main() {
-	cfg, err := config.LoadEnvironmentConfig()
+	_, err := config.LoadEnvironmentConfig()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	db, err := sql.Open("mysql", cfg.Database.URI)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	if err := db.Ping(); err != nil {
-		log.Fatal(err.Error())
-	}
-
-	dns := domain.NewMysqlNameSystemProvider(db)
 
 	certificateProvider := certificate.NewLocalCertificatesProvider(loadLocalCustomCACerts())
 
