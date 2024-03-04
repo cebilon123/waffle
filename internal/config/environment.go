@@ -13,7 +13,7 @@ type Environment struct {
 
 func (e *Environment) Validate() error {
 	errs := make([]error, 0)
-	
+
 	return errors.Join(errs...)
 }
 

@@ -6,11 +6,6 @@ import (
 	"fmt"
 )
 
-const (
-	pathCertFile = ".cert/server.crt"
-	pathKeyFile  = ".cert/server.key"
-)
-
 // Provider should be implemented by the structs
 // that are able to provide certificates.
 type Provider interface {
@@ -20,14 +15,20 @@ type Provider interface {
 
 type LocalCertificatesProvider struct {
 	customCaCerts [][]byte
+	certPEMBlock  []byte
+	keyPEMBlock   []byte
 }
 
-func NewLocalCertificatesProvider(caCerts [][]byte) *LocalCertificatesProvider {
-	return &LocalCertificatesProvider{customCaCerts: caCerts}
+func NewLocalCertificatesProvider(caCerts [][]byte, certPEMBlock, keyPEMBlock []byte) *LocalCertificatesProvider {
+	return &LocalCertificatesProvider{
+		customCaCerts: caCerts,
+		certPEMBlock:  certPEMBlock,
+		keyPEMBlock:   keyPEMBlock,
+	}
 }
 
 func (l *LocalCertificatesProvider) GetTLSCertificate() (*tls.Certificate, error) {
-	cert, err := tls.LoadX509KeyPair(pathCertFile, pathKeyFile)
+	cert, err := tls.X509KeyPair(l.certPEMBlock, l.keyPEMBlock)
 	if err != nil {
 		return nil, fmt.Errorf("load x509 key pair: %w", err)
 	}

@@ -1,0 +1,5 @@
+dns:
+  - host: "google.localhost"
+    address: "https://google.com"
+  - host: "100commitow.localhost"
+    address: "https://100commitow.pl"

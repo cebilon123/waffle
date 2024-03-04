@@ -1,16 +1,21 @@
 package main
 
 import (
+	"embed"
 	_ "embed"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql"
-
-	cert "waffle/.cert"
 	"waffle/internal/certificate"
 	"waffle/internal/config"
+	"waffle/internal/domain"
 	"waffle/internal/proxy"
 )
+
+//go:embed config/config.yml
+var yamlConfigBytes []byte
+
+//go:embed .cert/*
+var Certificates embed.FS
 
 func main() {
 	_, err := config.LoadEnvironmentConfig()
@@ -18,9 +23,16 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	certificateProvider := certificate.NewLocalCertificatesProvider(loadLocalCustomCACerts())
+	yamlCfg, err := config.NewYamlConfig(yamlConfigBytes)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	server := proxy.NewServer(dns, ":8080", certificateProvider)
+	yamlDnsProvider := domain.NewYamlNameSystemProvider(yamlCfg)
+
+	certificateProvider := certificate.NewLocalCertificatesProvider(loadLocalCustomCACerts(), loadLocalCertPEMBlock(), loadLocalKeyPEMBlock())
+
+	server := proxy.NewServer(yamlDnsProvider, ":8080", certificateProvider)
 
 	log.Println("Starting Waffle Proxy on port :8080 🚀")
 
@@ -30,7 +42,19 @@ func main() {
 }
 
 func loadLocalCustomCACerts() [][]byte {
-	certBytes, _ := cert.Certificates.ReadFile("ca.crt")
+	certBytes, _ := Certificates.ReadFile(".cert/ca.crt")
 
 	return [][]byte{certBytes}
+}
+
+func loadLocalCertPEMBlock() []byte {
+	certBytes, _ := Certificates.ReadFile(".cert/server.crt")
+
+	return certBytes
+}
+
+func loadLocalKeyPEMBlock() []byte {
+	certBytes, _ := Certificates.ReadFile(".cert/server.key")
+
+	return certBytes
 }
