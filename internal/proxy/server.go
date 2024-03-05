@@ -103,6 +103,9 @@ func (s *Server) Start() error {
 	}
 
 	tcpListener, err := tls.Listen("tcp", s.addr, tlsConfig)
+	if err != nil {
+		return fmt.Errorf("tls tcp listener listen: %w", err)
+	}
 
 	router := http.NewServeMux()
 	router.HandleFunc("/", handler.RedirectHandler(s.dns))
