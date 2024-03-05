@@ -9,10 +9,9 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"waffle/internal/handler"
 
 	"waffle/internal/certificate"
-	"waffle/internal/domain"
+	"waffle/internal/redirect"
 )
 
 var (
@@ -62,20 +61,20 @@ var (
 )
 
 type Server struct {
-	dns                 domain.NameSystemProvider
 	addr                string
 	certificateProvider certificate.Provider
+	redirectHandler     *redirect.Handler
 }
 
 func NewServer(
-	dns domain.NameSystemProvider,
 	addr string,
 	certificateProvider certificate.Provider,
+	redirectHandler *redirect.Handler,
 ) *Server {
 	return &Server{
-		dns:                 dns,
 		addr:                addr,
 		certificateProvider: certificateProvider,
+		redirectHandler:     redirectHandler,
 	}
 }
 
@@ -107,11 +106,8 @@ func (s *Server) Start() error {
 		return fmt.Errorf("tls tcp listener listen: %w", err)
 	}
 
-	router := http.NewServeMux()
-	router.HandleFunc("/", handler.RedirectHandler(s.dns))
-
 	server := &http.Server{
-		Handler:           router,
+		Handler:           s.redirectHandler,
 		Addr:              fmt.Sprintf("%s%s", "localhost", s.addr),
 		ReadHeaderTimeout: 120 * time.Second,
 		WriteTimeout:      120 * time.Second,
@@ -119,7 +115,7 @@ func (s *Server) Start() error {
 		ReadTimeout:       120 * time.Second,
 		TLSConfig:         tlsConfig,
 		MaxHeaderBytes:    1048576,
-		ErrorLog:          log.New(os.Stderr, "", 0),
+		ErrorLog:          log.New(os.Stderr, "proxy server: ", 0),
 	}
 
 	if err := server.Serve(tcpListener); err != nil && !errors.Is(err, http.ErrServerClosed) {

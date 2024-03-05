@@ -2,6 +2,8 @@ package domain
 
 import (
 	"fmt"
+	"net/url"
+
 	"waffle/internal/config"
 )
 
@@ -15,12 +17,17 @@ func NewYamlNameSystemProvider(cfg *config.YamlConfig) *YamlNameSystemProvider {
 	}
 }
 
-func (y *YamlNameSystemProvider) GetAddress(host string) (string, error) {
+func (y *YamlNameSystemProvider) GetAddress(host string) (*url.URL, error) {
 	for _, h := range y.cfg.DNS {
 		if h.Host == host {
-			return h.Address, nil
+			urlAddress, err := url.Parse(h.Address)
+			if err != nil {
+				return nil, fmt.Errorf("parse dns address: %w", err)
+			}
+
+			return urlAddress, nil
 		}
 	}
 
-	return "", fmt.Errorf("%s not found in configuration", host)
+	return nil, fmt.Errorf("'%s' not found in configuration", host)
 }

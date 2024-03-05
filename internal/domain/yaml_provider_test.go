@@ -1,12 +1,16 @@
 package domain
 
 import (
+	"net/url"
+	"reflect"
 	"testing"
 
 	"waffle/internal/config"
 )
 
 func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
+	urlAddress, _ := url.Parse("https://127.0.0.1:8080")
+
 	type fields struct {
 		cfg *config.YamlConfig
 	}
@@ -17,7 +21,7 @@ func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    string
+		want    *url.URL
 		wantErr bool
 	}{
 		{
@@ -28,7 +32,7 @@ func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
 			args: args{
 				host: "not.com",
 			},
-			want:    "",
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -38,7 +42,7 @@ func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
 					DNS: []*config.Dns{
 						{
 							Host:    "yes.com",
-							Address: "127.0.0.1:8080",
+							Address: "https://127.0.0.1:8080",
 						},
 					},
 				},
@@ -46,7 +50,7 @@ func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
 			args: args{
 				host: "yes.com",
 			},
-			want:    "127.0.0.1:8080",
+			want:    urlAddress,
 			wantErr: false,
 		},
 	}
@@ -60,7 +64,7 @@ func TestYamlNameSystemProvider_GetAddress(t *testing.T) {
 				t.Errorf("GetAddress() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetAddress() got = %v, want %v", got, tt.want)
 			}
 		})
