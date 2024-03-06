@@ -12,6 +12,7 @@ import (
 	"waffle/internal/domain"
 	"waffle/internal/proxy"
 	"waffle/internal/redirect"
+	"waffle/internal/waf"
 )
 
 func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) error {
@@ -36,9 +37,9 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 		loadLocalKeyPEMBlock(certificates),
 	)
 
-	redirectHandler := redirect.NewHandler(yamlDnsProvider)
+	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider))
 
-	proxyServer := proxy.NewServer(":8080", certificateProvider, redirectHandler)
+	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
 
 	log.Println("Starting Waffle Proxy on port :8080 🚀")
 

@@ -35,7 +35,7 @@ There are two types of XSS:
 **HTML injection**
 > HTML injection are attacks agains the HTML tokenization algorithm, examples:
 ![img.png](readme/html_injection_Samples.png)
-
+> Basically, we need to tokenize input and check attributes, tags against a set of rules
 
 Links:
 + [A Comprehensive Examination of Cloudflare's IP-based Distributed Denial of Service Mitigation](https://www.researchgate.net/publication/375238537_A_Comprehensive_Examination_of_Cloudflare%27s_IP-based_Distributed_Denial_of_Service_Mitigation)

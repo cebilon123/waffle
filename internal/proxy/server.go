@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"waffle/internal/certificate"
-	"waffle/internal/redirect"
 )
 
 var (
@@ -63,18 +62,18 @@ var (
 type Server struct {
 	addr                string
 	certificateProvider certificate.Provider
-	redirectHandler     *redirect.Handler
+	handler             http.Handler
 }
 
 func NewServer(
 	addr string,
 	certificateProvider certificate.Provider,
-	redirectHandler *redirect.Handler,
+	redirectHandler http.Handler,
 ) *Server {
 	return &Server{
 		addr:                addr,
 		certificateProvider: certificateProvider,
-		redirectHandler:     redirectHandler,
+		handler:             redirectHandler,
 	}
 }
 
@@ -107,7 +106,7 @@ func (s *Server) Start() error {
 	}
 
 	server := &http.Server{
-		Handler:           s.redirectHandler,
+		Handler:           s.handler,
 		Addr:              fmt.Sprintf("%s%s", "localhost", s.addr),
 		ReadHeaderTimeout: 120 * time.Second,
 		WriteTimeout:      120 * time.Second,
