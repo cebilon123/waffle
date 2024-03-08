@@ -13,6 +13,7 @@ import (
 	"waffle/internal/proxy"
 	"waffle/internal/redirect"
 	"waffle/internal/waf"
+	"waffle/internal/waf/guard"
 )
 
 func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) error {
@@ -37,7 +38,9 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 		loadLocalKeyPEMBlock(certificates),
 	)
 
-	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider))
+	defender := guard.NewDefenseCoordinator([]guard.Defender{&guard.XSS{}})
+
+	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender)
 
 	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
 
