@@ -22,7 +22,7 @@ Execute make certs_windows and go through process. It should certs in the .cert 
 ## Planned features / Architecture
 To bo honest, I'm learning how to write WAF from the scratch, so this part will be updated after a while. 
 
-- [ ] XSS protection (HTML + we can take a look on sql injection)
+- [X] XSS protection (HTML + we can take a look on sql injection)
 - [ ] DDOS protection
 
 ## Education
