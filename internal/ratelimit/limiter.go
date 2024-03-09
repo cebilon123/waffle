@@ -2,9 +2,10 @@ package ratelimit
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"net"
 	"time"
+
+	"github.com/google/uuid"
 
 	"waffle/internal/cache"
 )

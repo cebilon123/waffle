@@ -17,7 +17,7 @@ import (
 )
 
 func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) error {
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	_, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
 	_, err := config.LoadEnvironmentConfig()

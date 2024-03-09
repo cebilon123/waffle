@@ -15,7 +15,7 @@ func TestRate_IsLimited(t *testing.T) {
 	type fields struct {
 		UUID         string
 		IpAddress    net.IP
-		LimitedUntil *time.Time
+		LimitedUntil time.Time
 	}
 	tests := []struct {
 		name   string
@@ -23,23 +23,16 @@ func TestRate_IsLimited(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "limited until is nil, returns false",
-			fields: fields{
-				LimitedUntil: nil,
-			},
-			want: false,
-		},
-		{
 			name: "limited until is after now, returns false",
 			fields: fields{
-				LimitedUntil: &limitedUntilAfter,
+				LimitedUntil: limitedUntilAfter,
 			},
 			want: false,
 		},
 		{
 			name: "limited until is before now, returns true",
 			fields: fields{
-				LimitedUntil: &limitedUntilBefore,
+				LimitedUntil: limitedUntilBefore,
 			},
 			want: true,
 		},
