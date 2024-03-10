@@ -6,11 +6,13 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	"waffle/internal/certificate"
 	"waffle/internal/config"
 	"waffle/internal/domain"
 	"waffle/internal/proxy"
+	"waffle/internal/ratelimit"
 	"waffle/internal/redirect"
 	"waffle/internal/waf"
 	"waffle/internal/waf/guard"
@@ -40,7 +42,9 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 
 	defender := guard.NewDefenseCoordinator([]guard.Defender{&guard.XSS{}})
 
-	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender)
+	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
+
+	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender, limiter)
 
 	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
 

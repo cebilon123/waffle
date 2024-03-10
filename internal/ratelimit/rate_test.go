@@ -23,18 +23,18 @@ func TestRate_IsLimited(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "limited until is after now, returns false",
+			name: "limited until is after now, returns true",
 			fields: fields{
 				LimitedUntil: limitedUntilAfter,
 			},
-			want: false,
+			want: true,
 		},
 		{
-			name: "limited until is before now, returns true",
+			name: "limited until is before now, returns false",
 			fields: fields{
 				LimitedUntil: limitedUntilBefore,
 			},
-			want: true,
+			want: false,
 		},
 	}
 	for _, tt := range tests {

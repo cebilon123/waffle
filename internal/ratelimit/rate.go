@@ -14,5 +14,5 @@ type Rate struct {
 }
 
 func (r *Rate) IsLimited() bool {
-	return r.LimitedUntil.Before(clock.Now())
+	return clock.Now().Before(r.LimitedUntil)
 }
