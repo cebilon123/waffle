@@ -8,6 +8,7 @@ require (
 	github.com/goccy/go-yaml v1.11.3
 	github.com/google/uuid v1.6.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
 )
 
 require (

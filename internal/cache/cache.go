@@ -6,14 +6,18 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
+type stringConstraint interface {
+	~string
+}
+
 // Cache is a cache build based on github.com/patrickmn/go-cache.
 // It extends its functionality by introducing the generics, which
 // simplifies obtaining the value.
-type Cache[K any, T any] struct {
+type Cache[K stringConstraint, T any] struct {
 	cache *cache.Cache
 }
 
-func New[K any, T any](defaultExpiration time.Duration, cleanupInterval time.Duration) *Cache[K, T] {
+func New[K stringConstraint, T any](defaultExpiration time.Duration, cleanupInterval time.Duration) *Cache[K, T] {
 	c := cache.New(defaultExpiration, cleanupInterval)
 
 	return &Cache[K, T]{
@@ -21,12 +25,12 @@ func New[K any, T any](defaultExpiration time.Duration, cleanupInterval time.Dur
 	}
 }
 
-func (c *Cache[K, T]) Set(key string, val any) {
-	c.cache.Set(key, val, cache.DefaultExpiration)
+func (c *Cache[K, T]) Set(key K, val any) {
+	c.cache.Set(string(key), val, cache.DefaultExpiration)
 }
 
-func (c *Cache[K, T]) Get(key string) (*T, bool) {
-	v, ok := c.cache.Get(key)
+func (c *Cache[K, T]) Get(key K) (*T, bool) {
+	v, ok := c.cache.Get(string(key))
 	if !ok {
 		return nil, false
 	}
