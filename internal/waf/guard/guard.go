@@ -28,6 +28,8 @@ func (d *DefenseCoordinator) Validate(rw *RequestWrapper) error {
 	errChan := make(chan error)
 
 	go func() {
+		defer close(errChan)
+
 		for _, defender := range d.defenders {
 			wg.Add(1)
 
@@ -41,7 +43,6 @@ func (d *DefenseCoordinator) Validate(rw *RequestWrapper) error {
 		}
 
 		wg.Wait()
-		close(errChan)
 	}()
 
 	select {
