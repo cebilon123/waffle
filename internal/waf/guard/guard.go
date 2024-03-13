@@ -3,12 +3,14 @@ package guard
 import (
 	"fmt"
 	"sync"
+
+	"waffle/internal/request"
 )
 
 // Defender must be implemented by the struct
 // representing defense rule (or set of rules).
 type Defender interface {
-	Validate(rw *RequestWrapper) error
+	Validate(rw *request.Wrapper) error
 }
 
 // DefenseCoordinator coordinates defense. It validates request against set of defenders.
@@ -22,7 +24,7 @@ func NewDefenseCoordinator(defenders []Defender) *DefenseCoordinator {
 	return &DefenseCoordinator{defenders: defenders}
 }
 
-func (d *DefenseCoordinator) Validate(rw *RequestWrapper) error {
+func (d *DefenseCoordinator) Validate(rw *request.Wrapper) error {
 	var wg sync.WaitGroup
 
 	errChan := make(chan error)
@@ -33,7 +35,7 @@ func (d *DefenseCoordinator) Validate(rw *RequestWrapper) error {
 		for _, defender := range d.defenders {
 			wg.Add(1)
 
-			go func(rw *RequestWrapper, d Defender, errChan chan error) {
+			go func(rw *request.Wrapper, d Defender, errChan chan error) {
 				if err := d.Validate(rw); err != nil {
 					errChan <- err
 				}
@@ -46,7 +48,7 @@ func (d *DefenseCoordinator) Validate(rw *RequestWrapper) error {
 	}()
 
 	select {
-	case <-rw.request.Context().Done():
+	case <-rw.Request().Context().Done():
 		return nil
 	case err, ok := <-errChan:
 		if !ok {
