@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	"waffle/internal/visualize"
 
 	"waffle/internal/certificate"
 	"waffle/internal/config"
@@ -44,7 +45,9 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 
 	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
 
-	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender, limiter)
+	visualizeServer := visualize.NewServer(":8081")
+
+	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender, limiter, visualizeServer.GetVisualizer())
 
 	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
 

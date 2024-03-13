@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"waffle/internal/visualize"
 
 	"waffle/internal/ratelimit"
 	"waffle/internal/request"
@@ -11,20 +12,18 @@ import (
 )
 
 type Handler struct {
-	next     http.Handler
-	defender guard.Defender
-	limiter  ratelimit.Limiter
+	next       http.Handler
+	defender   guard.Defender
+	limiter    ratelimit.Limiter
+	visualizer *visualize.Visualizer
 }
 
-func NewHandler(
-	next http.Handler,
-	defender guard.Defender,
-	limiter ratelimit.Limiter,
-) *Handler {
+func NewHandler(next http.Handler, defender guard.Defender, limiter ratelimit.Limiter, visualizer *visualize.Visualizer) *Handler {
 	return &Handler{
-		next:     next,
-		defender: defender,
-		limiter:  limiter,
+		next:       next,
+		defender:   defender,
+		limiter:    limiter,
+		visualizer: visualizer,
 	}
 }
 
@@ -50,6 +49,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(tmp))
 
 	requestWrapper := request.NewRequestWrapper(r, &ipAddr)
+
+	go h.visualizer.VisualizeRequestWrapper(*requestWrapper)
 
 	if err := h.defender.Validate(ctx, requestWrapper); err != nil {
 		w.WriteHeader(http.StatusForbidden)
