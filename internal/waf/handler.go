@@ -31,6 +31,8 @@ func NewHandler(
 var _ http.Handler = (*Handler)(nil)
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	ipAddr, err := request.GetRealIPAddress(*r)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -47,7 +49,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tmp := h.limiter.SetRate(r.Context(), ipAddr, time.Now().Add(time.Second*5))
 	_, _ = w.Write([]byte(tmp))
 
-	if err := h.defender.Validate(guard.NewRequestWrapper(r)); err != nil {
+	requestWrapper := request.NewRequestWrapper(r, &ipAddr)
+
+	if err := h.defender.Validate(ctx, requestWrapper); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = w.Write([]byte(err.Error()))
 		return

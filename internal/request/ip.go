@@ -21,7 +21,7 @@ const (
 	HeaderXClusterClientIP = "X-Cluster-Client-Ip"
 )
 
-// headers are the request headers that can provide us with the ip addresses
+// headers are the Request headers that can provide us with the ip addresses
 var headers = []string{
 	HeaderXForwardedFor,
 	HeaderXForwarded,
@@ -42,7 +42,7 @@ func GetRealIPAddress(r http.Request) (net.IP, error) {
 	if err != nil {
 		addrStr, err = getIPStringFromRequestRemoteAddress(r)
 		if err != nil {
-			return nil, fmt.Errorf("get ip string from request remote address")
+			return nil, fmt.Errorf("get ip string from Request remote address")
 		}
 	}
 
@@ -50,7 +50,7 @@ func GetRealIPAddress(r http.Request) (net.IP, error) {
 		return ipAddr, nil
 	}
 
-	return nil, errors.New("cannot get ip address from the request")
+	return nil, errors.New("cannot get ip address from the Request")
 }
 
 func getIPStringFromHeaders(r http.Request) (string, error) {

@@ -1,17 +1,18 @@
 package request
 
 import (
+	"net"
 	"net/http"
 )
 
 type Wrapper struct {
-	request *http.Request
+	Request   *http.Request
+	IPAddress *net.IP
 }
 
-func NewRequestWrapper(r *http.Request) *Wrapper {
-	return &Wrapper{request: r}
-}
-
-func (w *Wrapper) Request() *http.Request {
-	return w.request
+func NewRequestWrapper(r *http.Request, ipAddress *net.IP) *Wrapper {
+	return &Wrapper{
+		Request:   r,
+		IPAddress: ipAddress,
+	}
 }

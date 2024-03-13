@@ -49,6 +49,7 @@ func (ip *SyncIPTreeSetProvider) GetSet() *treeset.Set {
 	return ip.set
 }
 
+//nolint:unused
 func (ip *SyncIPTreeSetProvider) startUpdating() {
 	go func() {
 		for {
@@ -59,6 +60,7 @@ func (ip *SyncIPTreeSetProvider) startUpdating() {
 	}()
 }
 
+//nolint:unused
 func (ip *SyncIPTreeSetProvider) tryUpdateSet() {
 	ip.mu.Lock()
 	defer ip.mu.Unlock()
@@ -77,6 +79,7 @@ func (ip *SyncIPTreeSetProvider) tryUpdateSet() {
 
 type fetchIPSliceFunc func(ctx context.Context) ([]net.IP, error)
 
+//nolint:unused
 func ipComparator(a interface{}, b interface{}) int {
 	aIP := a.(net.IP)
 	bIP := b.(net.IP)

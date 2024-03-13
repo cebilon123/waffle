@@ -1,6 +1,7 @@
 package guard
 
 import (
+	"context"
 	"errors"
 	"io"
 
@@ -13,8 +14,8 @@ type XSS struct {
 
 // Validate validates if given input is XSS. It only returns error
 // if given input is XSS, in other cases it returns nil.
-func (X *XSS) Validate(rw *request.Wrapper) error {
-	body, err := io.ReadAll(rw.Request().Body)
+func (X *XSS) Validate(_ context.Context, rw *request.Wrapper) error {
+	body, err := io.ReadAll(rw.Request.Body)
 	if err != nil {
 		return nil
 	}
