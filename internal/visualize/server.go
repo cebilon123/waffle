@@ -10,7 +10,6 @@ import (
 type Server struct {
 	port       string
 	visualizer *Visualizer
-	clients map[]
 }
 
 func NewServer(port string) *Server {
@@ -26,7 +25,7 @@ func (s *Server) GetVisualizer() *Visualizer {
 
 func (s *Server) Start(ctx context.Context) {
 	handlerFunc := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, err := websocket.Accept(w,r, nil)
+		_, err := websocket.Accept(w, r, nil)
 		if err != nil {
 
 		}
