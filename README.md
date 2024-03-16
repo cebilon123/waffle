@@ -4,7 +4,7 @@
 
 <div align="center">
 
-  <img src="readme/waffle.jpg" alt="drawing" width="400" class="logo"/>
+  <img src="readme/waffle.png" alt="drawing" width="400" class="logo"/>
 
 </div>
 
