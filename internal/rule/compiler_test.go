@@ -1,13 +1,15 @@
 package rule
 
 import (
+	"errors"
+	"github.com/stretchr/testify/mock"
 	"reflect"
 	"testing"
 )
 
 func TestCustomCompiler_Compile(t *testing.T) {
 	type fields struct {
-		builder Builder
+		builderFunc func() Builder
 	}
 	type args struct {
 		name  string
@@ -36,11 +38,50 @@ func TestCustomCompiler_Compile(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "missing => sign, error returned",
+			args: args{
+				name:  "name",
+				value: "p p.length() > 0",
+			},
+			wantErr: true,
+		},
+		{
+			name: "to many => signs, error returned",
+			args: args{
+				name:  "name",
+				value: "p => p.format() => json",
+			},
+			wantErr: true,
+		},
+		{
+			name: "builder returns error, error returned",
+			fields: fields{
+				builderFunc: func() Builder {
+					b := NewMockBuilder(t)
+
+					b.EXPECT().Build(mock.Anything, mock.Anything, mock.Anything).
+						Return(nil, errors.New("err"))
+
+					return b
+				},
+			},
+			args: args{
+				name:  "name",
+				value: "p => p.length() > 0",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			var builder Builder
+			if tt.fields.builderFunc != nil {
+				builder = tt.fields.builderFunc()
+			}
+
 			c := &CustomCompiler{
-				builder: tt.fields.builder,
+				builder: builder,
 			}
 			got, err := c.Compile(tt.args.name, tt.args.value)
 			if (err != nil) != tt.wantErr {

@@ -1,10 +1,10 @@
 quiet: False
-keeptree: True
-disable-version-string: True
 with-expecter: True
-mockname: "{{.InterfaceName}}"
-filename: "{{.MockName}}.go"
-outpkg: mocks
+filename: "mock_{{.InterfaceName}}.go"
+dir: "{{.InterfaceDir}}"
+mockname: "Mock{{.InterfaceName}}"
+outpkg: "{{.PackageName}}"
+inpackage: True
 packages:
   waffle/internal/rule:
     interfaces:
