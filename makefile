@@ -23,3 +23,6 @@ certs:
 	openssl req -new -sha256 -key ./cmd/proxy/.cert/server.key -out ./cmd/proxy/.cert/server.csr
 	openssl x509 -req -in ./cmd/proxy/.cert/server.csr -CA ./cmd/proxy/.cert/ca.crt -CAkey ./cmd/proxy/.cert/ca.key -CAcreateserial -out ./cmd/proxy/.cert/server.crt -days 3650 -sha256
 	openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
+
+mocks:
+	mockery

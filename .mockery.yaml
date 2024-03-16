@@ -1,0 +1,11 @@
+quiet: False
+keeptree: True
+disable-version-string: True
+with-expecter: True
+mockname: "{{.InterfaceName}}"
+filename: "{{.MockName}}.go"
+outpkg: mocks
+packages:
+  waffle/internal/rule:
+    interfaces:
+      Builder:

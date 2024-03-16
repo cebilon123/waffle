@@ -25,17 +25,14 @@ type Compiler interface {
 }
 
 type CustomCompiler struct {
+	builder Builder
 }
 
 var _ Compiler = (*CustomCompiler)(nil)
 
 func (c *CustomCompiler) Compile(name, value string) (*Predicate, error) {
-	if len(name) == 0 {
-		return nil, ErrEmptyPredicateName
-	}
-
-	if len(value) == 0 {
-		return nil, ErrEmptyPredicateValue
+	if err := validateInput(name, value); err != nil {
+		return nil, fmt.Errorf("validate name and value: %w", err)
 	}
 
 	variable, expression, err := getVariableAndLogicalExpression(strings.TrimSpace(value))
@@ -43,6 +40,24 @@ func (c *CustomCompiler) Compile(name, value string) (*Predicate, error) {
 		return nil, fmt.Errorf("get variable and logical expression for predicate: %w", err)
 	}
 
+	pred, err := c.builder.Build(name, variable, expression)
+	if err != nil {
+		return nil, fmt.Errorf("build predicate: %w", err)
+	}
+
+	return pred, nil
+}
+
+func validateInput(name string, value string) error {
+	if len(name) == 0 {
+		return ErrEmptyPredicateName
+	}
+
+	if len(value) == 0 {
+		return ErrEmptyPredicateValue
+	}
+
+	return nil
 }
 
 func getVariableAndLogicalExpression(value string) (string, string, error) {
