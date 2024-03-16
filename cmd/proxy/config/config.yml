@@ -3,3 +3,10 @@ dns:
     address: "https://google.com"
   - host: "100commitow.localhost"
     address: "https://100commitow.pl"
+
+rules:
+  custom:
+    - name: "payload must contains at least one character"
+      predicate: "p => p.length() > 0"
+    - name: "payload must be a json"
+      predicate: "p => p.format() == json"

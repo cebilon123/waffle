@@ -47,7 +47,12 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 
 	visualizeServer := visualize.NewServer(":8081")
 
-	guardHandler := waf.NewHandler(redirect.NewHandler(yamlDnsProvider), defender, limiter, visualizeServer.GetVisualizer())
+	guardHandler := waf.NewHandler(
+		redirect.NewHandler(yamlDnsProvider),
+		defender,
+		limiter,
+		visualizeServer.GetVisualizer(),
+	)
 
 	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
 
