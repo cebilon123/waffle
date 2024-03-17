@@ -35,7 +35,7 @@ func (c *CustomCompiler) Compile(name, value string) (*Predicate, error) {
 		return nil, fmt.Errorf("validate name and value: %w", err)
 	}
 
-	variable, expression, err := getVariableAndLogicalExpression(strings.TrimSpace(value))
+	variable, expression, err := getVariableAndLogicalExpression(value)
 	if err != nil {
 		return nil, fmt.Errorf("get variable and logical expression for predicate: %w", err)
 	}

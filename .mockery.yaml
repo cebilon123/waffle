@@ -9,4 +9,5 @@ packages:
   waffle/internal/rule:
     interfaces:
       Builder:
+      Tokenizer:
       node:

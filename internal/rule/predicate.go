@@ -4,41 +4,6 @@ import (
 	"waffle/internal/request"
 )
 
-const (
-	operatorEq    = "=="
-	operatorNotEq = "!="
-	operatorGt    = ">"
-	operatorLs    = "<"
-
-	methodLength = "LEN"
-	methodFormat = "FORMAT"
-
-	fieldPayload = "payload"
-	fieldHeaders = "headers"
-)
-
-var (
-	// operators are compilable operators.
-	operators = []string{
-		operatorEq,
-		operatorNotEq,
-		operatorGt,
-		operatorLs,
-	}
-
-	// methods are compilable methods.
-	methods = []string{
-		methodLength,
-		methodFormat,
-	}
-
-	// fields are compilable fields available in the request wrapper.
-	fields = []string{
-		fieldPayload,
-		fieldHeaders,
-	}
-)
-
 type Predicate struct {
 	Name string
 	Eval func(r *request.Wrapper) bool
