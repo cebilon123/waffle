@@ -9,3 +9,4 @@ packages:
   waffle/internal/rule:
     interfaces:
       Builder:
+      node:

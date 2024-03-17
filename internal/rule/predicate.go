@@ -1,8 +1,6 @@
 package rule
 
 import (
-	"fmt"
-	"io"
 	"waffle/internal/request"
 )
 
@@ -56,24 +54,24 @@ type predicateBuilder struct {
 var _ Builder = (*predicateBuilder)(nil)
 
 func (p *predicateBuilder) Build(name, variable, expression string) (*Predicate, error) {
-	tree := and{
-		left: gt{
-			valueFunc: func(r request.Wrapper) (int, error) {
-				bytes, err := io.ReadAll(r.Request.Body)
-				if err != nil {
-					return 0, fmt.Errorf("cannot read bytes: %w", err)
-				}
-
-				return len(bytes), nil
-			},
-			check: 0,
-		},
-		right: gt{
-			valueFunc: func(r request.Wrapper) (int, error) {
-				return len(r.Request.Header), nil
-			},
-			check: 0,
-		},
-	}
+	//tree := and{
+	//	left: gt{
+	//		valueFunc: func(r request.Wrapper) (int, error) {
+	//			bytes, err := io.ReadAll(r.Request.Body)
+	//			if err != nil {
+	//				return 0, fmt.Errorf("cannot read bytes: %w", err)
+	//			}
+	//
+	//			return len(bytes), nil
+	//		},
+	//		check: 0,
+	//	},
+	//	right: gt{
+	//		valueFunc: func(r request.Wrapper) (int, error) {
+	//			return len(r.Request.Header), nil
+	//		},
+	//		check: 0,
+	//	},
+	//}
 	return nil, nil
 }
