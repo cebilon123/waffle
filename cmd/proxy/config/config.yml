@@ -6,7 +6,7 @@ dns:
 
 rules:
   custom:
-    - name: "payload must contains at least one character"
-      predicate: "p => p.length() > 0"
+    - name: "request payload must contains at least one character and should contain at least one header"
+      predicate: "p => LEN(p.payload) > 0 && LEN(p.headers) > 0"
     - name: "payload must be a json"
-      predicate: "p => p.format() == json"
+      predicate: "p => FORMAT(p.payload) == 'json'"
