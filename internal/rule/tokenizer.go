@@ -5,12 +5,15 @@ const (
 	operatorNotEq = "!="
 	operatorGt    = ">"
 	operatorLs    = "<"
+	operatorArrow = "=>"
 
 	methodLength = "LEN"
 	methodFormat = "FORMAT"
 
 	fieldPayload = "payload"
 	fieldHeaders = "headers"
+
+	tokenVariable = "variable"
 )
 
 var (
@@ -20,6 +23,7 @@ var (
 		operatorNotEq,
 		operatorGt,
 		operatorLs,
+		operatorArrow,
 	}
 
 	// methods are compilable methods.
@@ -35,22 +39,20 @@ var (
 	}
 )
 
-type expressionTree node
-
 type Tokenizer interface {
-	BuildExpressionTree(variable, expression string) (expressionTree, error)
+	BuildTokens(variable, expression string) ([]Token, error)
 }
 
-type customRulesTokenizer struct {
+type Token struct {
+	Name  string
+	Value string
 }
 
-var _ Tokenizer = (*customRulesTokenizer)(nil)
-
-func newCustomRulesTokenizer() *customRulesTokenizer {
-	return &customRulesTokenizer{}
+type tokenizer struct {
 }
 
-func (c *customRulesTokenizer) BuildExpressionTree(variable, expression string) (expressionTree, error) {
-	//TODO implement me
-	panic("implement me")
+func (t *tokenizer) BuildTokens(variable, expression string) ([]Token, error) {
+	for _, r := range []rune(expression) {
+
+	}
 }
