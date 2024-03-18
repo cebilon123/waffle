@@ -1,46 +1,29 @@
 package rule
 
-const (
-	operatorEq    = "=="
-	operatorNotEq = "!="
-	operatorGt    = ">"
-	operatorLs    = "<"
-	operatorArrow = "=>"
-
-	methodLength = "LEN"
-	methodFormat = "FORMAT"
-
-	fieldPayload = "payload"
-	fieldHeaders = "headers"
-
-	tokenVariable = "variable"
-)
+import "fmt"
 
 var (
-	// operators are compilable operators.
-	operators = []string{
-		operatorEq,
-		operatorNotEq,
-		operatorGt,
-		operatorLs,
-		operatorArrow,
-	}
+	tokenVariable        = "var"
+	tokenFunction        = "func"
+	tokenLParen          = "("
+	tokenRParen          = ")"
+	tokenDot             = "."
+	tokenDoubleAmpersand = "&&"
+	tokenMoreThan        = ">"
+	tokenLessThan        = "<"
+	tokenNumber          = "token_number"
+	tokenField           = "field"
 
-	// methods are compilable methods.
-	methods = []string{
-		methodLength,
+	methodLen    = "LEN"
+	methodFormat = "FORMAT"
+	methods      = []string{
+		methodLen,
 		methodFormat,
-	}
-
-	// fields are compilable fields available in the request wrapper.
-	fields = []string{
-		fieldPayload,
-		fieldHeaders,
 	}
 )
 
 type Tokenizer interface {
-	BuildTokens(variable, expression string) ([]Token, error)
+	BuildTokens(variable string, expression string) ([]Token, error)
 }
 
 type Token struct {
@@ -51,8 +34,70 @@ type Token struct {
 type tokenizer struct {
 }
 
-func (t *tokenizer) BuildTokens(variable, expression string) ([]Token, error) {
-	for _, r := range []rune(expression) {
+func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, error) {
+	var (
+		tokens []Token
+		match  []rune
+	)
+
+	runeExpression := []rune(expression)
+
+	for i, r := range runeExpression {
+		match = append(match, r)
+		strMatch := string(match)
+
+		v, ok := getFunction(match)
+		if ok {
+			tokens = append(tokens, Token{
+				Name:  tokenFunction,
+				Value: v,
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if isVariable(match, variable) && len(expression) >= i+1 && runeExpression[i+1] == '.' {
+			tokens = append(tokens, Token{
+				Name:  tokenVariable,
+				Value: string(match),
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if strMatch == "." {
+			tokens = append(tokens, Token{
+				Name:  tokenDot,
+				Value: tokenDot,
+			})
+
+			match = []rune{}
+			continue
+		}
 
 	}
+
+	return tokens, nil
 }
+
+func getFunction(match []rune) (string, bool) {
+	strMatch := string(match)
+
+	for _, method := range methods {
+		if method == strMatch {
+			return method, true
+		}
+	}
+
+	return "", false
+}
+
+func isVariable(match []rune, variable string) bool {
+	strMatch := string(match)
+
+	return strMatch == fmt.Sprintf("%s", variable)
+}
+
+func getSpecialCharacter()

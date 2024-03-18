@@ -21,7 +21,7 @@ func newCustomRulesTokenizer() *expressionTreeBuilder {
 }
 
 func (c *expressionTreeBuilder) BuildExpressionTree(variable, expression string) (expressionTree, error) {
-	tokens, err := c.tokenizer.BuildTokens(variable, expression)
+	_, err := c.tokenizer.BuildTokens(variable, expression)
 	if err != nil {
 		return nil, fmt.Errorf("build tokens: %w", err)
 	}
