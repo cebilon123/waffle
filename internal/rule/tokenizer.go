@@ -6,24 +6,27 @@ import (
 )
 
 var (
-	tokenVariable        = "var"
-	tokenFunction        = "func"
-	tokenLParen          = "("
-	tokenRParen          = ")"
-	tokenDot             = "."
-	tokenDoubleAmpersand = "&&"
-	tokenMoreThan        = ">"
-	tokenLessThan        = "<"
-	tokenNumber          = "token_number"
-	tokenField           = "field"
-	tokenSpace           = "space"
-	specialCharacters    = []string{
+	tokenVariable = "var"
+	tokenFunction = "func"
+	tokenNumber   = "token_number"
+	tokenField    = "field"
+	tokenSpace    = "space"
+
+	tokenLParen           = "("
+	tokenRParen           = ")"
+	tokenDot              = "."
+	tokenDoubleAmpersand  = "&&"
+	tokenMoreThan         = ">"
+	tokenLessThan         = "<"
+	tokenSingleApostrophe = "'"
+	specialCharacters     = []string{
 		tokenLParen,
 		tokenRParen,
 		tokenDot,
 		tokenDoubleAmpersand,
 		tokenMoreThan,
 		tokenLessThan,
+		tokenSingleApostrophe,
 	}
 
 	methodLen    = "LEN"
@@ -41,7 +44,10 @@ var (
 	}
 )
 
+// Tokenizer should be implemented by the structs that tokenizes input.
 type Tokenizer interface {
+	// BuildTokens builds tokens based on the variable and expression.
+	// Returns error if tokenizer cannot be done with the input.
 	BuildTokens(variable string, expression string) ([]Token, error)
 }
 
@@ -124,6 +130,10 @@ func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, er
 			match = []rune{}
 			continue
 		}
+	}
+
+	if len(match) > 0 {
+		return nil, fmt.Errorf("there are still unmatched characters")
 	}
 
 	return tokens, nil

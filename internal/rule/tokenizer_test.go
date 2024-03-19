@@ -17,6 +17,14 @@ func Test_tokenizer_BuildTokens(t1 *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "wrong predicate, error returned",
+			args: args{
+				variable:   "add",
+				expression: "LANER(add.format) == 'json'",
+			},
+			wantErr: true,
+		},
+		{
 			name: "slice of tokens returned",
 			args: args{
 				variable:   "p",
