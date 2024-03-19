@@ -100,4 +100,6 @@ func isVariable(match []rune, variable string) bool {
 	return strMatch == fmt.Sprintf("%s", variable)
 }
 
-func getSpecialCharacter()
+func getSpecialCharacter(match []rune) (string, bool) {
+	strMatch := string(match)
+}
