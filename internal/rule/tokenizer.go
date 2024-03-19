@@ -1,6 +1,9 @@
 package rule
 
-import "fmt"
+import (
+	"fmt"
+	"unicode"
+)
 
 var (
 	tokenVariable        = "var"
@@ -13,12 +16,28 @@ var (
 	tokenLessThan        = "<"
 	tokenNumber          = "token_number"
 	tokenField           = "field"
+	tokenSpace           = "space"
+	specialCharacters    = []string{
+		tokenLParen,
+		tokenRParen,
+		tokenDot,
+		tokenDoubleAmpersand,
+		tokenMoreThan,
+		tokenLessThan,
+	}
 
 	methodLen    = "LEN"
 	methodFormat = "FORMAT"
 	methods      = []string{
 		methodLen,
 		methodFormat,
+	}
+
+	fieldPayload = "payload"
+	fieldHeaders = "headers"
+	fields       = []string{
+		fieldPayload,
+		fieldHeaders,
 	}
 )
 
@@ -44,7 +63,6 @@ func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, er
 
 	for i, r := range runeExpression {
 		match = append(match, r)
-		strMatch := string(match)
 
 		v, ok := getFunction(match)
 		if ok {
@@ -67,16 +85,45 @@ func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, er
 			continue
 		}
 
-		if strMatch == "." {
+		if v, ok := getSpecialCharacter(match); ok {
 			tokens = append(tokens, Token{
-				Name:  tokenDot,
-				Value: tokenDot,
+				Name:  v,
+				Value: v,
 			})
 
 			match = []rune{}
 			continue
 		}
 
+		if v, ok := getField(match); ok {
+			tokens = append(tokens, Token{
+				Name:  tokenField,
+				Value: v,
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if unicode.IsSpace(match[0]) {
+			tokens = append(tokens, Token{
+				Name:  tokenSpace,
+				Value: tokenSpace,
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if unicode.IsNumber(match[0]) {
+			tokens = append(tokens, Token{
+				Name:  tokenNumber,
+				Value: string(match[0]),
+			})
+
+			match = []rune{}
+			continue
+		}
 	}
 
 	return tokens, nil
@@ -102,4 +149,24 @@ func isVariable(match []rune, variable string) bool {
 
 func getSpecialCharacter(match []rune) (string, bool) {
 	strMatch := string(match)
+
+	for _, sch := range specialCharacters {
+		if sch == strMatch {
+			return sch, true
+		}
+	}
+
+	return "", false
+}
+
+func getField(match []rune) (string, bool) {
+	strMatch := string(match)
+
+	for _, field := range fields {
+		if field == strMatch {
+			return field, true
+		}
+	}
+
+	return "", false
 }

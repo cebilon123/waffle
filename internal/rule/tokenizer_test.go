@@ -48,16 +48,32 @@ func Test_tokenizer_BuildTokens(t1 *testing.T) {
 					Value: tokenRParen,
 				},
 				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
+				},
+				{
 					Name:  tokenMoreThan,
 					Value: ">",
+				},
+				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
 				},
 				{
 					Name:  tokenNumber,
 					Value: "0",
 				},
 				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
+				},
+				{
 					Name:  tokenDoubleAmpersand,
 					Value: "&&",
+				},
+				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
 				},
 				{
 					Name:  tokenFunction,
@@ -84,8 +100,16 @@ func Test_tokenizer_BuildTokens(t1 *testing.T) {
 					Value: tokenRParen,
 				},
 				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
+				},
+				{
 					Name:  tokenMoreThan,
 					Value: ">",
+				},
+				{
+					Name:  tokenSpace,
+					Value: tokenSpace,
 				},
 				{
 					Name:  tokenNumber,
