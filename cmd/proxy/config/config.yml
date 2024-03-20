@@ -1,12 +1,12 @@
 dns:
   - host: "google.localhost:8080"
     address: "https://google.com"
-  - host: "100commitow.localhost"
+  - host: "100commitow.localhost:8080"
     address: "https://100commitow.pl"
 
 rules:
   custom:
-    - name: "request payload must contains at least one character and should contain at least one header"
+    - name: "request payload must contain at least one character and should contain at least one header"
       predicate: "p => LEN(p.payload) > 0 && LEN(p.headers) > 0"
     - name: "payload must be a json"
       predicate: "p => FORMAT(p.payload) == 'json'"

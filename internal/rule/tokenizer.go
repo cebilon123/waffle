@@ -44,13 +44,6 @@ var (
 	}
 )
 
-// Tokenizer should be implemented by the structs that tokenizes input.
-type Tokenizer interface {
-	// BuildTokens builds tokens based on the variable and expression.
-	// Returns error if tokenizer cannot be done with the input.
-	BuildTokens(variable string, expression string) ([]Token, error)
-}
-
 type Token struct {
 	Name  string
 	Value string
@@ -58,6 +51,8 @@ type Token struct {
 
 type tokenizer struct {
 }
+
+var _ Tokenizer = (*tokenizer)(nil)
 
 func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, error) {
 	var (
