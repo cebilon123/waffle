@@ -4,10 +4,6 @@ import "fmt"
 
 type expressionTree node
 
-type ExpressionTreeBuilder interface {
-	BuildExpressionTree(variable, expression string) (expressionTree, error)
-}
-
 type ExpressionTreeFactory interface {
 	CreateExpressionTree(tokens []Token) (expressionTree, error)
 }
@@ -26,7 +22,7 @@ type expressionTreeBuilder struct {
 
 var _ ExpressionTreeBuilder = (*expressionTreeBuilder)(nil)
 
-func newCustomRulesTokenizer() *expressionTreeBuilder {
+func newExpressionTreeBuilder() *expressionTreeBuilder {
 	return &expressionTreeBuilder{
 		tokenizer:             &tokenizer{},
 		expressionTreeFactory: &expressionTreeFactory{},
