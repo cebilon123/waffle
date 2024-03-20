@@ -19,6 +19,7 @@ var (
 	tokenMoreThan         = ">"
 	tokenLessThan         = "<"
 	tokenSingleApostrophe = "'"
+	tokenOr               = "||"
 	specialCharacters     = []string{
 		tokenLParen,
 		tokenRParen,
@@ -27,6 +28,14 @@ var (
 		tokenMoreThan,
 		tokenLessThan,
 		tokenSingleApostrophe,
+		tokenOr,
+	}
+
+	mathematicalOperators = []string{
+		tokenDoubleAmpersand,
+		tokenMoreThan,
+		tokenLessThan,
+		tokenOr,
 	}
 
 	methodLen    = "LEN"

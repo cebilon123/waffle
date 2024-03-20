@@ -30,6 +30,12 @@ type CustomCompiler struct {
 
 var _ Compiler = (*CustomCompiler)(nil)
 
+func NewCustomCompiler() *CustomCompiler {
+	return &CustomCompiler{
+		builder: newPredicateBuilder(),
+	}
+}
+
 func (c *CustomCompiler) Compile(name, value string) (*Predicate, error) {
 	if err := validateInput(name, value); err != nil {
 		return nil, fmt.Errorf("validate name and value: %w", err)
