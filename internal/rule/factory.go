@@ -28,29 +28,42 @@ func (e *expressionTreeFactory) CreateExpressionTree(tokens []Token) (expression
 		nodes      []node
 		tokenMatch []Token
 	)
+
 	for _, token := range tokens {
 		tokenMatch = append(tokenMatch, token)
 
 		for _, m := range matches {
 			if m.isMatching(tokenMatch) {
-				if isAdjustableNode(m.node) {
-					nd, err := e.nodeAdjuster.AdjustNode(m.node, tokenMatch)
-					if err != nil {
-						return nil, fmt.Errorf("adjust node %s: %w", reflect.TypeOf(m.node).Name(), err)
-					}
-
-					nodes = append(nodes, nd)
-
-					tokenMatch = []Token{}
-
-					continue
+				nd, err := e.adaptNode(m.node, tokenMatch)
+				if err != nil {
+					return nil, fmt.Errorf("adapt node: %w", err)
 				}
 
+				nodes = append(nodes, nd)
+
+				tokenMatch = []Token{}
 			}
 		}
 	}
 
+	for _, nd := range nodes {
+		
+	}
+
 	return nil, nil
+}
+
+func (e *expressionTreeFactory) adaptNode(base node, tokenMatch []Token) (node, error) {
+	if !isAdjustableNode(base) {
+		return base, nil
+	}
+
+	nd, err := e.nodeAdjuster.AdjustNode(base, tokenMatch)
+	if err != nil {
+		return nil, fmt.Errorf("adjust node %s: %w", reflect.TypeOf(base).Name(), err)
+	}
+
+	return nd, nil
 }
 
 type match struct {

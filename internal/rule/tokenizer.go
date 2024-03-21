@@ -158,7 +158,7 @@ func getFunction(match []rune) (string, bool) {
 func isVariable(match []rune, variable string) bool {
 	strMatch := string(match)
 
-	return strMatch == fmt.Sprintf("%s", variable)
+	return strMatch == variable
 }
 
 func getSpecialCharacter(match []rune) (string, bool) {
