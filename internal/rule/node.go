@@ -14,12 +14,22 @@ func (a and) Eval(r request.Wrapper) bool {
 	return a.left.Eval(r) && a.right.Eval(r)
 }
 
+func (a and) SetChild(left, right node) {
+	a.left = left
+	a.right = right
+}
+
 type or struct {
 	left, right node
 }
 
 func (o or) Eval(r request.Wrapper) bool {
 	return o.left.Eval(r) || o.right.Eval(r)
+}
+
+func (o or) SetChild(left, right node) {
+	o.left = left
+	o.right = right
 }
 
 type eq struct {

@@ -1,8 +1,12 @@
 package rule
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
+	"sort"
+
+	"github.com/emirpasic/gods/stacks/arraystack"
 )
 
 var (
@@ -10,6 +14,11 @@ var (
 
 	adjustableNodes = []reflect.Type{
 		reflect.TypeOf(gt{}),
+	}
+
+	higherOrderNodes = []reflect.Type{
+		reflect.TypeOf(and{}),
+		reflect.TypeOf(or{}),
 	}
 )
 
@@ -46,11 +55,12 @@ func (e *expressionTreeFactory) CreateExpressionTree(tokens []Token) (expression
 		}
 	}
 
-	for _, nd := range nodes {
-		
+	eTree, err := buildExpressionTree(nodes)
+	if err != nil {
+		return nil, fmt.Errorf("build expression tree: %w", err)
 	}
 
-	return nil, nil
+	return eTree, nil
 }
 
 func (e *expressionTreeFactory) adaptNode(base node, tokenMatch []Token) (node, error) {
@@ -95,4 +105,89 @@ func isAdjustableNode(nd node) bool {
 	}
 
 	return false
+}
+
+func buildExpressionTree(nodes []node) (expressionTree, error) {
+	sort.Slice(nodes, func(i, j int) bool {
+		if len(nodes) < 3 {
+			return false
+		}
+
+		first, second, third := reflect.TypeOf(nodes[i-1]), reflect.TypeOf(nodes[i]), reflect.TypeOf(nodes[j])
+
+		for _, t := range higherOrderNodes {
+			if first == t {
+
+			}
+		}
+	})
+
+	stack := arraystack.Stack{}
+
+	for i := 0; i < len(nodes); i++ {
+		switch nodes[i].(type) {
+		case and:
+			// after nth iteration it could be an and, we want then continue
+			// in order to add additional elements to the stack
+			if stack.Size() < 2 {
+				continue
+			}
+
+			if stack.Size() > 2 {
+				return nil, errors.New("expression is invalid, and can only evaluate 2 predicates")
+			}
+
+			nd := and{}
+
+			var childrenNodes []node
+
+			for j := 0; j < 2; j++ {
+				v, _ := stack.Pop()
+				vt, _ := v.(node)
+				childrenNodes = append(childrenNodes, vt)
+			}
+
+			// nodes are popped from the stack, therefore we need to change order of the children
+			nd.SetChild(childrenNodes[1], childrenNodes[0])
+
+			stack.Clear()
+
+			stack.Push(nd)
+		case or:
+			if stack.Size() < 2 {
+				continue
+			}
+
+			if stack.Size() > 2 {
+				return nil, errors.New("expression is invalid, and can only evaluate 2 predicates")
+			}
+
+			nd := or{}
+
+			var childrenNodes []node
+
+			for j := 0; j < 2; j++ {
+				v, _ := stack.Pop()
+				vt, _ := v.(node)
+				childrenNodes = append(childrenNodes, vt)
+			}
+
+			nd.SetChild(childrenNodes[1], childrenNodes[0])
+
+			stack.Clear()
+
+			stack.Push(nd)
+		default:
+			stack.Push(nodes[i])
+		}
+	}
+
+	v, ok := stack.Pop()
+	if !ok {
+		return nil, fmt.Errorf("empty expression stack")
+	}
+
+	vt, _ := v.(node)
+
+	return expressionTree(vt), nil
 }
