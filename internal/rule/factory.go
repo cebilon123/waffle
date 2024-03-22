@@ -4,8 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"sort"
-
+	
 	"github.com/emirpasic/gods/stacks/arraystack"
 )
 
@@ -108,22 +107,10 @@ func isAdjustableNode(nd node) bool {
 }
 
 func buildExpressionTree(nodes []node) (expressionTree, error) {
-	sort.Slice(nodes, func(i, j int) bool {
-		if len(nodes) < 3 {
-			return false
-		}
-
-		first, second, third := reflect.TypeOf(nodes[i-1]), reflect.TypeOf(nodes[i]), reflect.TypeOf(nodes[j])
-
-		for _, t := range higherOrderNodes {
-			if first == t {
-
-			}
-		}
-	})
-
 	stack := arraystack.Stack{}
 
+	// todo: we need to add additional check if less than 2 then we need to validate if NEXT node is not a higherOrderNode
+	// and then we need to build based on that
 	for i := 0; i < len(nodes); i++ {
 		switch nodes[i].(type) {
 		case and:
