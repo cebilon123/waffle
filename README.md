@@ -41,7 +41,9 @@ To bo honest, I'm learning how to write WAF from the scratch, so this part will 
 - [X] XSS protection (HTML + we can take a look on sql injection)
 - [ ] DDOS protection
 
-## Education
+## What I have learned?
+- Neovim
+
 
 ### XSS
 There are two types of XSS:
