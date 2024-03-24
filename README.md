@@ -43,6 +43,8 @@ To bo honest, I'm learning how to write WAF from the scratch, so this part will 
 
 ## What I have learned?
 - Neovim
+- DDOS protection
+- XSS /SQLI protection
 
 
 ### XSS
