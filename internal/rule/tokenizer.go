@@ -31,6 +31,8 @@ var (
 		tokenLessThan,
 		tokenSingleApostrophe,
 		tokenOr,
+		tokenEqual,
+		tokenNotEqual,
 	}
 
 	methodLen    = "LEN"

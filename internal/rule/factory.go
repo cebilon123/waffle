@@ -48,6 +48,20 @@ func (e *expressionTreeFactory) CreateExpressionTree(tokens []Token) (expression
 
 }
 
+// 1.  While there are tokens to be read:
+// 2.        Read a token
+// 3.        If it's a number add it to queue
+// 4.        If it's an operator
+// 5.               While there's an operator on the top of the stack with greater precedence:
+// 6.                       Pop operators from the stack onto the output queue
+// 7.               Push the current operator onto the stack
+// 8.        If it's a left bracket push it onto the stack
+// 9.        If it's a right bracket
+// 10.            While there's not a left bracket at the top of the stack:
+// 11.                     Pop operators from the stack onto the output queue.
+// 12.             Pop the left bracket from the stack and discard it
+// 13. While there are operators on the stack, pop them to the queue
+
 func reversePolishNotationSort(tokens []Token) []Token {
 	var (
 		operatorStack arraystack.Stack
@@ -56,7 +70,23 @@ func reversePolishNotationSort(tokens []Token) []Token {
 
 	for _, token := range tokens {
 		if isOperator(token) {
+			if v, ok := operatorStack.Peek(); ok {
+				vt := v.(Token)
+				if isGreaterOperatorOnStack(token, vt) {
+					for !operatorStack.Empty() {
+						v, ok := operatorStack.Pop()
+						if !ok {
+							continue
+						}
 
+						vt := v.(Token)
+
+						outputTokens = append(outputTokens, vt)
+					}
+
+					operatorStack.Push(token)
+				}
+			}
 		}
 	}
 }
@@ -69,4 +99,24 @@ func isOperator(tkn Token) bool {
 	}
 
 	return false
+}
+
+func isGreaterOperatorOnStack(tkn Token, lastTknFromStack Token) bool {
+	var (
+		tknIdx              int
+		lastTknFromStackIdx int
+	)
+
+	for i, op := range operatorPrecedence {
+		for _, opp := range op {
+			if opp == tkn.Name {
+				tknIdx = i
+			}
+			if opp == lastTknFromStack.Name {
+				lastTknFromStackIdx = i
+			}
+		}
+	}
+
+	return lastTknFromStackIdx > tknIdx
 }
