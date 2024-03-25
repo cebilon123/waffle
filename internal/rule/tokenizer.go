@@ -20,7 +20,9 @@ var (
 	tokenLessThan         = "<"
 	tokenSingleApostrophe = "'"
 	tokenOr               = "||"
-	specialCharacters     = []string{
+	tokenEqual            = "=="
+	tokenNotEqual         = "!="
+	tokensOperators       = []string{
 		tokenLParen,
 		tokenRParen,
 		tokenDot,
@@ -28,13 +30,6 @@ var (
 		tokenMoreThan,
 		tokenLessThan,
 		tokenSingleApostrophe,
-		tokenOr,
-	}
-
-	mathematicalOperators = []string{
-		tokenDoubleAmpersand,
-		tokenMoreThan,
-		tokenLessThan,
 		tokenOr,
 	}
 
@@ -164,7 +159,7 @@ func isVariable(match []rune, variable string) bool {
 func getSpecialCharacter(match []rune) (string, bool) {
 	strMatch := string(match)
 
-	for _, sch := range specialCharacters {
+	for _, sch := range tokensOperators {
 		if sch == strMatch {
 			return sch, true
 		}
