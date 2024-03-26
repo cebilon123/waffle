@@ -72,7 +72,7 @@ func reversePolishNotationSort(tokens []Token) []Token {
 		if isOperator(token) {
 			if v, ok := operatorStack.Peek(); ok {
 				vt := v.(Token)
-				if isGreaterOperatorOnStack(token, vt) {
+				if isTokenWithGreaterPrecedenceFromThePrecedenceSlice(token, vt) {
 					for !operatorStack.Empty() {
 						v, ok := operatorStack.Pop()
 						if !ok {
@@ -131,7 +131,7 @@ func isOperator(tkn Token) bool {
 	return false
 }
 
-func isGreaterOperatorOnStack(tkn Token, lastTknFromStack Token) bool {
+func isTokenWithGreaterPrecedenceFromThePrecedenceSlice(tkn Token, lastTknFromStack Token) bool {
 	var (
 		tknIdx              int
 		lastTknFromStackIdx int
@@ -148,5 +148,5 @@ func isGreaterOperatorOnStack(tkn Token, lastTknFromStack Token) bool {
 		}
 	}
 
-	return lastTknFromStackIdx > tknIdx
+	return lastTknFromStackIdx < tknIdx
 }
