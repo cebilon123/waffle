@@ -45,7 +45,7 @@ type expressionTreeFactory struct {
 var _ ExpressionTreeFactory = (*expressionTreeFactory)(nil)
 
 func (e *expressionTreeFactory) CreateExpressionTree(tokens []Token) (expressionTree, error) {
-
+	return nil, nil
 }
 
 // 1.  While there are tokens to be read:
@@ -87,8 +87,38 @@ func reversePolishNotationSort(tokens []Token) []Token {
 					operatorStack.Push(token)
 				}
 			}
+
+			continue
 		}
+
+		if token.Name == tokenLParen {
+			operatorStack.Push(token)
+
+			continue
+		}
+
+		if token.Name == tokenRParen {
+			var lParen *Token
+			for !operatorStack.Empty() || lParen == nil {
+				v, _ := operatorStack.Pop()
+
+				vt := v.(Token)
+
+				if vt.Name == tokenLParen {
+					lParen = &vt
+					continue
+				}
+
+				outputTokens = append(outputTokens, vt)
+			}
+
+			continue
+		}
+
+		tokens = append(tokens, token)
 	}
+
+	return tokens
 }
 
 func isOperator(tkn Token) bool {

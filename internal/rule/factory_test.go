@@ -2,9 +2,9 @@ package rule
 
 import "testing"
 
-func Test_isAdjustableNode(t *testing.T) {
+func Test_isOperator(t *testing.T) {
 	type args struct {
-		nd node
+		tkn Token
 	}
 	tests := []struct {
 		name string
@@ -12,24 +12,28 @@ func Test_isAdjustableNode(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "type isn't adjustable, false returned",
+			name: "is an operator, true returned",
 			args: args{
-				nd: and{},
-			},
-			want: false,
-		},
-		{
-			name: "type is adjustable, true returned",
-			args: args{
-				nd: gt{},
+				tkn: Token{
+					Name: tokenMoreThan,
+				},
 			},
 			want: true,
+		},
+		{
+			name: "isn't an operator, false returned",
+			args: args{
+				tkn: Token{
+					Name: tokenLParen,
+				},
+			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isAdjustableNode(tt.args.nd); got != tt.want {
-				t.Errorf("isAdjustableNode() = %v, want %v", got, tt.want)
+			if got := isOperator(tt.args.tkn); got != tt.want {
+				t.Errorf("isOperator() = %v, want %v", got, tt.want)
 			}
 		})
 	}

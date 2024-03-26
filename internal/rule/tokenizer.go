@@ -23,8 +23,6 @@ var (
 	tokenEqual            = "=="
 	tokenNotEqual         = "!="
 	tokensOperators       = []string{
-		tokenLParen,
-		tokenRParen,
 		tokenDot,
 		tokenDoubleAmpersand,
 		tokenMoreThan,
@@ -126,6 +124,26 @@ func (t *tokenizer) BuildTokens(variable string, expression string) ([]Token, er
 			tokens = append(tokens, Token{
 				Name:  tokenNumber,
 				Value: string(match[0]),
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if string(match[0]) == tokenLParen {
+			tokens = append(tokens, Token{
+				Name:  tokenLParen,
+				Value: tokenLParen,
+			})
+
+			match = []rune{}
+			continue
+		}
+
+		if string(match[0]) == tokenRParen {
+			tokens = append(tokens, Token{
+				Name:  tokenRParen,
+				Value: tokenRParen,
 			})
 
 			match = []rune{}
