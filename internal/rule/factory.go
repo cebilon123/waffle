@@ -63,10 +63,9 @@ func (e *expressionTreeFactory) CreateExpressionTree(tokens []Token) (expression
 // 13. While there are operators on the stack, pop them to the queue
 
 func reversePolishNotationSort(tokens []Token) []Token {
-	var (
-		operatorStack arraystack.Stack
-		outputTokens  []Token
-	)
+
+	var outputTokens []Token
+	operatorStack := arraystack.New()
 
 	for _, token := range tokens {
 		if isOperator(token) {
@@ -100,7 +99,10 @@ func reversePolishNotationSort(tokens []Token) []Token {
 		if token.Name == tokenRParen {
 			var lParen *Token
 			for !operatorStack.Empty() || lParen == nil {
-				v, _ := operatorStack.Pop()
+				v, ok := operatorStack.Pop()
+				if !ok {
+					continue
+				}
 
 				vt := v.(Token)
 

@@ -1,6 +1,9 @@
 package rule
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_isOperator(t *testing.T) {
 	type args struct {
@@ -82,6 +85,73 @@ func Test_isTokenWithGreaterPrecedenceFromThePrecedenceSlices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := isTokenWithGreaterPrecedenceFromThePrecedenceSlice(tt.args.tkn, tt.args.lastTknFromStack); got != tt.want {
 				t.Errorf("isTokenWithGreaterPrecedenceFromThePrecedenceSlice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_reversePolishNotationSort(t *testing.T) {
+	type args struct {
+		tokens []Token
+	}
+	tests := []struct {
+		name string
+		args args
+		want []Token
+	}{
+		{
+			name: "tokens should be ordered",
+			args: args{
+				tokens: []Token{
+					{
+						Name:  tokenFunction,
+						Value: "LEN",
+					},
+					{
+						Name:  tokenLParen,
+						Value: tokenLParen,
+					},
+					{
+						Name:  tokenVariable,
+						Value: "p",
+					},
+					{
+						Name:  tokenDot,
+						Value: ".",
+					},
+					{
+						Name:  tokenField,
+						Value: "headers",
+					},
+					{
+						Name:  tokenRParen,
+						Value: tokenRParen,
+					},
+					{
+						Name:  tokenSpace,
+						Value: tokenSpace,
+					},
+					{
+						Name:  tokenMoreThan,
+						Value: tokenMoreThan,
+					},
+					{
+						Name:  tokenSpace,
+						Value: tokenSpace,
+					},
+					{
+						Name:  tokenNumber,
+						Value: "5",
+					},
+				},
+			},
+			want: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := reversePolishNotationSort(tt.args.tokens); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("reversePolishNotationSort() = %v, want %v", got, tt.want)
 			}
 		})
 	}
