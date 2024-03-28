@@ -1,5 +1,6 @@
 # WAFFLE
 
+Info: I'm moving out from current apartment so from 28.03 till around end of the month there will be only small commits.
 ---
 
 <div align="center">
