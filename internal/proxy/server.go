@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/tls"
 	"errors"
@@ -8,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"waffle/internal/certificate"
@@ -117,9 +119,27 @@ func (s *Server) Start() error {
 		ErrorLog:          log.New(os.Stderr, "proxy server: ", 0),
 	}
 
+	// Implementing graceful shutdown - if an interrupt signal is received, stop listening on the port
+	idleConnsClosed := make(chan struct{})
+
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		<-sigint
+
+		// We received an interrupt signal, shut down.
+		log.Println("Shutting down server...")
+		if err := server.Shutdown(context.Background()); err != nil {
+			// Error from closing listener(s), or context timeout:
+			log.Printf("HTTP server Shutdown: %v", err)
+		}
+		close(idleConnsClosed)
+	}()
+
 	if err := server.Serve(tcpListener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("server serve: %w", err)
 	}
+	<-idleConnsClosed
 
 	return nil
 }
