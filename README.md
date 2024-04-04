@@ -48,7 +48,7 @@ To bo honest, I'm learning how to write WAF from the scratch, so this part will 
 ### What do I need to know to help?
 If you are looking to help to with a code contribution our project uses  **GO, k8s.** 
 
-### How do I make a contribution?
+### How can I do that?
 
 Never made an open source contribution before? Wondering how contributions work in the in our project? Here's a quick rundown!
 
