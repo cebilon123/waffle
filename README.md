@@ -93,6 +93,8 @@ There are two types of XSS:
 + JS injection (can be validated only on the client side, so for now let's stick to the developers 😁)
 
 **HTML injection**
+
+
 > HTML injection are attacks agains the HTML tokenization algorithm, examples:
 ![img.png](readme/html_injection_Samples.png)
 > Basically, we need to tokenize input and check attributes, tags against a set of rules
