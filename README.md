@@ -87,14 +87,6 @@ What does the Code of Conduct mean for me?
 
 > Our Code of Conduct means that you are responsible for treating everyone on the project with respect and courtesy regardless of their identity. If you are the victim of any inappropriate behavior or comments as described in our Code of Conduct, we are here for you and will do the best to ensure that the abuser is reprimanded appropriately, per our code.
 
-### XSS
-There are two types of XSS:
-+ HTML injection
-+ JS injection (can be validated only on the client side, so for now let's stick to the developers 😁)
-
-**HTML injection**
-
-
 > HTML injection are attacks agains the HTML tokenization algorithm, examples:
 ![img.png](readme/html_injection_Samples.png)
 > Basically, we need to tokenize input and check attributes, tags against a set of rules
