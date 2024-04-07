@@ -27,8 +27,8 @@ we are missing a real modular and open source **Web Application Firewall** that 
 + [mockery](https://vektra.github.io/mockery/latest/installation/) 
 
 1. Create certificates and FS embed go file provider `make certs_windows`
-2. Execute `docker compose up -d` to create needed infrastructure
-3. Set environment variables before running the proxy:
+[//]: # (2. Execute `docker compose up -d` to create needed infrastructure)
+2. Set environment variables before running the proxy:
 
 ### Generate certificates
 Execute make certs_windows and go through process. It should certs in the .cert directory.
