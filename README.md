@@ -20,7 +20,7 @@ we are missing a real modular and open source **Web Application Firewall** that 
 ## How to run / Develop ?
 
 ### Prerequisites 
-+ Go 1.22
++ Go 1.22+
 + golangci-lint
 + make (if windows, try using chocolatey)
 + openssl (if windows, try using git bash)
