@@ -1,5 +1,10 @@
 # WAFFLE
 
+**!! NEW !!**
+
+We have a discord:
+https://discord.gg/kNfZzCx7se
+
 <div align="center">
 
   <img src="readme/waffle.png" alt="drawing" width="400" class="logo"/>
