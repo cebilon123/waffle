@@ -27,6 +27,7 @@ we are missing a real modular and open source **Web Application Firewall** that 
 ### Prerequisites 
 + Go 1.22+
 + golangci-lint
++ [Npcap](https://npcap.com/) (windows)
 + make (if windows, try using chocolatey)
 + openssl (if windows, try using git bash)
 + [mockery](https://vektra.github.io/mockery/latest/installation/) 
