@@ -13,29 +13,40 @@ type PacketSerializer interface {
 	SerializePackets(ctx context.Context, packetsChan chan<- gopacket.Packet) error
 }
 
+type NetworkInterfaceProvider interface {
+	GetNetworkInterface() (*pcap.Interface, error)
+}
+
 type CollectorConfig struct {
 	Protocol string
 	Port     string
 }
 
 type Collector struct {
-	cfg        *CollectorConfig
-	serializer PacketSerializer
+	cfg                  *CollectorConfig
+	serializer           PacketSerializer
+	netInterfaceProvider NetworkInterfaceProvider
 }
 
-func NewCollector(cfg CollectorConfig) *Collector {
+func NewCollector(cfg CollectorConfig, deviceProvider NetworkInterfaceProvider) *Collector {
 	return &Collector{
-		cfg: &cfg,
+		cfg:                  &cfg,
+		netInterfaceProvider: deviceProvider,
 	}
 }
 
 func (c *Collector) Run(ctx context.Context) error {
-	handle, err := pcap.OpenLive("eth0", 1600, true, pcap.BlockForever)
+	netInterface, err := c.netInterfaceProvider.GetNetworkInterface()
+	if err != nil {
+		return fmt.Errorf("get network interface using net interface provider: %w", err)
+	}
+
+	handle, err := pcap.OpenLive(netInterface.Name, 1600, true, pcap.BlockForever)
 	if err != nil {
 		return fmt.Errorf("pcap open live: %w", err)
 	}
 
-	if err := handle.SetBPFFilter(fmt.Sprintf("%s port %s", c.cfg.Protocol, c.cfg.Port)); err != nil {
+	if err := handle.SetBPFFilter("ip"); err != nil {
 		return fmt.Errorf("set BPFF filter: %w", err)
 	}
 
@@ -48,11 +59,11 @@ func (c *Collector) Run(ctx context.Context) error {
 		log.Println("collector closed")
 	}()
 
-	go func() {
-		if err := c.serializer.SerializePackets(ctx, packetsChan); err != nil {
-			log.Println("error in serialize packets")
-		}
-	}()
+	//go func() {
+	//	if err := c.serializer.SerializePackets(ctx, packetsChan); err != nil {
+	//		log.Println("error in serialize packets")
+	//	}
+	//}()
 
 	for {
 		select {
@@ -60,8 +71,8 @@ func (c *Collector) Run(ctx context.Context) error {
 			if !ok {
 				log.Println("error reading packet")
 			}
-
-			packetsChan <- packet
+			log.Println(packet.String())
+			//packetsChan <- packet
 
 		case <-ctx.Done():
 			return nil

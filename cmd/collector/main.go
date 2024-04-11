@@ -2,28 +2,31 @@ package main
 
 import (
 	"context"
-	"golang.org/x/sys/windows"
 	"log"
+	"waffle/internal/packet"
 
 	"waffle/internal/worker"
-	"waffle/pkg/permission"
 )
 
+const networkInterfaceDescription = "WAN Miniport (Network Monitor)"
+
 func main() {
-	if !windows.GetCurrentProcessToken().IsElevated() {
-		if err := permission.RunMeElevated(); err != nil {
-			panic(err.Error())
-		}
-	}
+	//if !windows.GetCurrentProcessToken().IsElevated() {
+	//	if err := permission.RunMeElevated(); err != nil {
+	//		panic(err.Error())
+	//	}
+	//}
 
 	ctx := context.Background()
 
 	log.Println("starting collector")
 
+	// NEXT TODO: add BPF filter builder
+	// https://www.ibm.com/docs/en/qsip/7.4?topic=queries-berkeley-packet-filters
 	collector := worker.NewCollector(worker.CollectorConfig{
-		Protocol: "tcp",
+		Protocol: "ip",
 		Port:     "8080",
-	})
+	}, packet.NewWindowsNetworkInterfaceProvider(networkInterfaceDescription))
 
 	if err := collector.Run(ctx); err != nil {
 		panic(err.Error())
