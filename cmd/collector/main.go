@@ -11,12 +11,6 @@ import (
 const networkInterfaceDescription = "WAN Miniport (Network Monitor)"
 
 func main() {
-	//if !windows.GetCurrentProcessToken().IsElevated() {
-	//	if err := permission.RunMeElevated(); err != nil {
-	//		panic(err.Error())
-	//	}
-	//}
-
 	ctx := context.Background()
 
 	log.Println("starting collector")
