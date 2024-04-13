@@ -3,24 +3,31 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 	"waffle/internal/packet"
 
 	"waffle/internal/worker"
 )
 
-const networkInterfaceDescription = "WAN Miniport (Network Monitor)"
+const networkInterfaceDescription = "Intel(R) I211 Gigabit Network Connection"
 
 func main() {
 	ctx := context.Background()
 
 	log.Println("starting collector")
 
+	inMemoryPacketSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
+
 	// NEXT TODO: add BPF filter builder
 	// https://www.ibm.com/docs/en/qsip/7.4?topic=queries-berkeley-packet-filters
-	collector := worker.NewCollector(worker.CollectorConfig{
-		Protocol: "ip",
-		Port:     "8080",
-	}, packet.NewWindowsNetworkInterfaceProvider(networkInterfaceDescription))
+	cfg := worker.CollectorConfig{
+		BPF: "ip",
+	}
+
+	collector := worker.NewCollector(
+		cfg,
+		packet.NewWindowsNetworkInterfaceProvider(networkInterfaceDescription),
+		inMemoryPacketSerializer)
 
 	if err := collector.Run(ctx); err != nil {
 		panic(err.Error())

@@ -3,6 +3,7 @@ package packet
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/google/gopacket/pcap"
 
@@ -33,11 +34,14 @@ func (w *WindowsNetworkInterfaceProvider) GetNetworkInterface() (*pcap.Interface
 		return nil, fmt.Errorf("find all network interfaces, %w", err)
 	}
 
-	for _, netInterface := range interfaces {
+	devicesDescriptions := make([]string, len(interfaces))
+	for i, netInterface := range interfaces {
+		devicesDescriptions[i] = netInterface.Description
+
 		if netInterface.Description == w.interfaceDescription {
 			return &netInterface, nil
 		}
 	}
 
-	return nil, ErrNetworkInterfaceNotFound
+	return nil, fmt.Errorf("%w, available devices descriptions: %s", ErrNetworkInterfaceNotFound, strings.Join(devicesDescriptions, " ; "))
 }
