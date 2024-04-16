@@ -1,5 +1,5 @@
 certs_windows:
-	mkdir "./cmd/proxy/.cert"
+	mkdir -p "./cmd/proxy/.cert"
 	# Create CA (certificate authority)
 	openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
 	openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
@@ -12,7 +12,7 @@ certs_windows:
 	openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
 
 certs:
-	mkdir "./cmd/proxy/.cert"
+	mkdir -p "./cmd/proxy/.cert"
 	# Create CA (certificate authority)
 	openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
 	openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
