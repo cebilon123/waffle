@@ -16,5 +16,13 @@ services:
       - 'proxy:/etc/mysql/conf.d/my.cnf'
       - 'proxy:/docker-entrypoint-initdb.d'
 
+  grafana:
+    image: grafana/grafana-enterprise:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - 'grafana-storage:/var/lib/grafana'
+
 volumes:
   proxy:
+  grafana-storage:
