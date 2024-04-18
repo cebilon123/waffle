@@ -1,6 +1,6 @@
 # WAFFLE
 
-**!! NEW !!**
+**!!! NEW !!!**
 
 We have a discord, come and join:
 https://discord.gg/kNfZzCx7se
