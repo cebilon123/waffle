@@ -120,9 +120,11 @@ func (s *Server) Start() error {
 	}
 
 	// Implementing graceful shutdown - if an interrupt signal is received, stop listening on the port
-	idleConnsClosed := make(chan struct{})
+	idleConnClosedChan := make(chan struct{})
 
 	go func() {
+		defer close(idleConnClosedChan)
+
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt)
 		<-sigint
@@ -133,13 +135,12 @@ func (s *Server) Start() error {
 			// Error from closing listener(s), or context timeout:
 			log.Printf("HTTP server Shutdown: %v", err)
 		}
-		close(idleConnsClosed)
 	}()
 
 	if err := server.Serve(tcpListener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("server serve: %w", err)
 	}
-	<-idleConnsClosed
+	<-idleConnClosedChan
 
 	return nil
 }
