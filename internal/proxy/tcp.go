@@ -13,6 +13,7 @@ type Sender interface {
 // incoming tcp connections
 type TCPReceiver struct {
 	localAddr string // localAddr is an address of the proxy server
+	sender    Sender // sender is a sender where tcp bytes are supposed to be redirected
 }
 
 func NewTCPReceiver(localAddr string) *TCPReceiver {
@@ -36,7 +37,10 @@ func (r *TCPReceiver) Run() error {
 		conn, err := listener.AcceptTCP()
 		if err != nil {
 			fmt.Printf("failed to accept TCP connection: %s", err.Error())
+
+			continue
 		}
+
 	}
 
 	return nil
