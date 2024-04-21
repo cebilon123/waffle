@@ -43,7 +43,6 @@ func (r *TCPReceiver) Run() error {
 
 	}
 
-	return nil
 }
 
 // TCPSender is responsible for the sending
