@@ -1,12 +1,14 @@
 package proxy
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"net"
 )
 
 type Sender interface {
-	Accept() error
+	Accept(rw io.ReadWriter) error
 }
 
 // TCPReceiver is responsible for the reading
@@ -41,6 +43,9 @@ func (r *TCPReceiver) Run() error {
 			continue
 		}
 
+		if err := r.sender.Accept(conn); err != nil {
+			fmt.Printf("failed to accept connection with sender: %s", err.Error())
+		}
 	}
 
 }
@@ -54,22 +59,45 @@ type TCPSender struct {
 	// TCP connection to desired location
 	pipes      map[string]any
 	remoteAddr string
+
+	bytesChan chan []byte
 }
 
-func NewTCPSender(remoteAddr string) *TCPSender {
+var _ Sender = (*TCPSender)(nil)
+
+func NewTCPSender(listenAddr, remoteAddr string) *TCPSender {
 	return &TCPSender{
 		pipes:      make(map[string]any),
 		remoteAddr: remoteAddr,
+		bytesChan:  make(chan []byte),
 	}
 }
 
-func (s *TCPSender) Run() error {
-	rAddr, err := net.ResolveTCPAddr("tcp", r.remoteAddr)
+func (s *TCPSender) Start(ctx context.Context) error {
+	rAddr, err := net.ResolveTCPAddr("tcp", s.remoteAddr)
 	if err != nil {
-		return fmt.Errorf("resolving remote tcp addr: '%s': %w", r.remoteAddr, err)
+		return fmt.Errorf("resolving remote tcp addr: '%s': %w", s.remoteAddr, err)
 	}
+
+	go s.startRemoteSender(ctx, rAddr)
+
+	return nil
 }
 
-type senderConstruct struct {
-	locationIPAddr *net.IPAddr
+func (s *TCPSender) Accept(rw io.ReadWriter) error {
+	bytes, err := io.ReadAll(rw)
+	if err != nil {
+		return fmt.Errorf("read all bytes from read writer: %w", err)
+	}
+
+	s.bytesChan <- bytes
+
+	return nil
+}
+
+func (s *TCPSender) startRemoteSender(ctx context.Context, remoteAddr *net.TCPAddr) {
+	net.DialTCP("tcp")
+	for bytes := range s.bytesChan {
+
+	}
 }
