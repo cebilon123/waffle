@@ -18,9 +18,10 @@ type TCPReceiver struct {
 	sender    Sender // sender is a sender where tcp bytes are supposed to be redirected
 }
 
-func NewTCPReceiver(localAddr string) *TCPReceiver {
+func NewTCPReceiver(localAddr string, sender Sender) *TCPReceiver {
 	return &TCPReceiver{
 		localAddr: localAddr,
+		sender:    sender,
 	}
 }
 
@@ -106,9 +107,10 @@ func (s *TCPSender) Accept(rw io.ReadWriter) error {
 // startRemoteSender is used to start process of sending incoming bytes to the host.
 // It should be called in another go routine in order to not block the main routine.
 func (s *TCPSender) startRemoteSender(ctx context.Context, listenAddr, remoteAddr *net.TCPAddr) {
-	conn, err := net.DialTCP("tcp", listenAddr, remoteAddr)
+	conn, err := net.DialTCP("tcp", remoteAddr, listenAddr)
 	if err != nil {
 		fmt.Printf("error dialing remote host: %s", err.Error())
+		return
 	}
 
 	defer func() {
