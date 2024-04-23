@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"waffle/internal/proxy"
 )
@@ -17,6 +18,9 @@ func main() {
 			log.Panicf("dummy: %s", err.Error())
 		}
 	}()
+
+	// just for testing
+	time.Sleep(time.Second * 1)
 
 	sender := proxy.NewTCPSender("127.0.0.1:8083", "127.0.0.1:8081")
 	receiver := proxy.NewTCPReceiver("127.0.0.1:8080", sender)
