@@ -9,6 +9,7 @@ COPY . .
 
 RUN go build cmd/proxy -o /out/app
 
+# multi stage build
 FROM alpine:latest
 COPY --from=builder /out/app /app
 ENTRYPOINT ["/app"]
