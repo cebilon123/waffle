@@ -9,7 +9,7 @@ COPY . .
 
 RUN go build cmd/proxy -o /out/app
 
-# multi stage build
+# multi stage build, to reduce size of the image
 FROM alpine:latest
 COPY --from=builder /out/app /app
 ENTRYPOINT ["/app"]
