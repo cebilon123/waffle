@@ -1,4 +1,4 @@
-package ml
+package ddosml
 
 // DDOS represents machine learning
 // DDOS protection.
