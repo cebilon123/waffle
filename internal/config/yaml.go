@@ -7,8 +7,9 @@ import (
 )
 
 type YamlConfig struct {
-	DNS   []*Dns `yaml:"dns"`
-	Rules Rules  `yaml:"rules"`
+	DNS      []*Dns   `yaml:"dns"`
+	Rules    Rules    `yaml:"rules"`
+	Database Database `yaml:"database"`
 }
 
 type Dns struct {
@@ -25,6 +26,12 @@ type Rules struct {
 type CustomRule struct {
 	Name      string `yaml:"name"`
 	Predicate string `yaml:"predicate"`
+}
+
+// Database represents database config.
+// Its temp as it should be moved to environment variables
+type Database struct {
+	ConnectionString string `yaml:"connectionString"`
 }
 
 func NewYamlConfig(yamlBytes []byte) (*YamlConfig, error) {

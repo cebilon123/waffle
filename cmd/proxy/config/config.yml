@@ -10,3 +10,9 @@ rules:
       predicate: "p => LEN(p.payload) > 0 && LEN(p.headers) > 0"
     - name: "payload must be a json"
       predicate: "p => FORMAT(p.payload) == 'json'"
+
+# For now it will be here but it should be moved to env variables
+database:
+  # Its docker compose based connection string
+  connectionString: "dns:root@tcp(127.0.0.1:3306)/dns"
+
