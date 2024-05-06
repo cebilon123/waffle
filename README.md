@@ -37,6 +37,39 @@ The project is huge, tho we are looking for the contributors.
 ### Generate certificates
 Execute make certs_windows and go through process. It should certs in the .cert directory.
 
+### Next steps
+
+> \[!IMPORTANT]
+>
+>
+>
+> Currently, the project can be only used with GO installed locally, but there is a plan to create usable binaries.
+
+**How to run binaries?*
+Currently there are 3 binaries: 
+- collector
+- proxy
+- tcpproxy (partially done)
+
+The proxy is the core binary, which can be kind of used, to run it execute:
+`go run ./cmd/proxy/main.go`
+
+Remember to add valid config to the `./cmd/proxy/config.yml` file, looks something like this:
+```yaml
+dns:
+  - host: "google.localhost:8080"
+    address: "https://google.com"
+  - host: "100commitow.localhost:8080"
+    address: "https://100commitow.pl"
+
+rules:
+  custom:
+    - name: "request payload must contain at least one character and should contain at least one header"
+      predicate: "p => LEN(p.payload) > 0 && LEN(p.headers) > 0"
+    - name: "payload must be a json"
+      predicate: "p => FORMAT(p.payload) == 'json'"
+```
+
 ## Planned features / Architecture
 To bo honest, I'm learning how to write WAF from the scratch, so this part will be updated after a while. 
 
