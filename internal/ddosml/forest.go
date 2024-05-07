@@ -1,13 +1,15 @@
 package ddosml
 
 import (
+	"context"
 	"sync"
 
 	"github.com/malaschitz/randomForest"
 )
 
 const (
-	maxDataCount = 1000
+	maxDataCount         = 1000
+	probabilityThreshold = 0.7
 )
 
 // randomForestClassifier is used to classify if given request
@@ -50,6 +52,40 @@ func (r *randomForestClassifier) AddNewClassifierModel(m *Request) {
 	}()
 
 	r.forest.AddDataRow(m.data(r.trainedData), m.result(), maxDataCount, 10, 2000)
+}
+
+// IsRequestPotentialDDOS returns decision if given request could be a ddos attack.
+// If context is canceled returns false, which means that given request could or couldn't be
+// marked as DDOS attack. Even if this method classifies if given request is DDOS, it doesn't
+// mean that this request is indeed a DDOS attack, it just returns that its highly probable
+// that this request is DDOS.
+func (r *randomForestClassifier) IsRequestPotentialDDOS(ctx context.Context, m *Request) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	resultChan := make(chan bool, 1)
+
+	go func() {
+		probabilities := r.forest.Vote(m.data(r.trainedData))
+
+		for _, prob := range probabilities {
+			if prob > probabilityThreshold {
+				resultChan <- true
+			}
+		}
+
+		resultChan <- false
+
+		close(resultChan)
+	}()
+
+	select {
+	case res := <-resultChan:
+		return res
+	// we don't want to return if request is DDOS if context is canceled
+	case <-ctx.Done():
+		return false
+	}
 }
 
 // data method returns slice of float64 representation of
