@@ -12,7 +12,7 @@ https://discord.gg/kNfZzCx7se
 
 
 ## Documentation
-This is github wiki's based documentation of the project:
+This is github wiki's based documentation of the project (in progress):
 - [Documentation](https://github.com/cebilon123/waffle/wiki/Documentation)
 
 ## Introduction
