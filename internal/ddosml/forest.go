@@ -2,6 +2,9 @@ package ddosml
 
 import (
 	"context"
+	"encoding/binary"
+	"fmt"
+	"io"
 	"sync"
 
 	"github.com/malaschitz/randomForest"
@@ -9,7 +12,7 @@ import (
 
 const (
 	maxDataCount         = 1000
-	probabilityThreshold = 0.7
+	probabilityThreshold = 0.7 //probabilityThreshold need to be adjusted
 )
 
 // randomForestClassifier is used to classify if given request
@@ -51,7 +54,7 @@ func (r *randomForestClassifier) AddNewClassifierModel(m *Request) {
 		r.mu.Unlock()
 	}()
 
-	r.forest.AddDataRow(m.data(r.trainedData), m.result(), maxDataCount, 10, 2000)
+	r.forest.AddDataRow(m.data(r.trainedData), m.isDDOSInt(), maxDataCount, 10, 2000)
 }
 
 // IsRequestPotentialDDOS returns decision if given request could be a ddos attack.
@@ -88,21 +91,28 @@ func (r *randomForestClassifier) IsRequestPotentialDDOS(ctx context.Context, m *
 	}
 }
 
-// data method returns slice of float64 representation of
-// the Request properties (attributes)
-//
-//	prevData is a previous data rows, used to normalize values to floats.
-func (c *Request) data(prevData []*Request) []float64 {
-	//todo: normalize data and return []float64 based on that
+// Write writes current state of the classifier to writer, in order to i.e.
+// serialize it on the disk or in the database.
+func (r *randomForestClassifier) Write(writer io.Writer) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	trainedData := make([]*Request, len(r.trainedData))
+	copy(trainedData, r.trainedData)
+
+	saveModel := randomForestClassifierSaveModel{
+		forest:      *r.forest,
+		trainedData: trainedData,
+	}
+
+	if err := binary.Write(writer, binary.BigEndian, saveModel); err != nil {
+		return fmt.Errorf("write random forest classifier: %w", err)
+	}
+
 	return nil
 }
 
-// result method returns result of given classifier model
-// (0 if given req is DDOS, 1 if given request isn't DDOS)
-func (c *Request) result() int {
-	if c.IsDDOS {
-		return 0
-	}
-
-	return 1
+type randomForestClassifierSaveModel struct {
+	forest      randomforest.Forest
+	trainedData []*Request
 }

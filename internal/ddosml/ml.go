@@ -10,10 +10,6 @@ type Validator interface {
 	ValidateRequest(ctx context.Context, req *http.Request) (bool, error)
 }
 
-type Request struct {
-	IsDDOS bool
-}
-
 // DDOS represents machine learning
 // DDOS protection.
 type DDOS struct {
