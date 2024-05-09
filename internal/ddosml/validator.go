@@ -3,6 +3,7 @@ package ddosml
 import (
 	"context"
 	"io"
+	"net/http"
 )
 
 type Classifier interface {
@@ -29,4 +30,12 @@ func NewMlModelValidator(classifier Classifier) *MLBasedModelValidator {
 	return &MLBasedModelValidator{
 		classifier: classifier,
 	}
+}
+
+func (m *MLBasedModelValidator) ValidateRequest(ctx context.Context, req *http.Request) (bool, error) {
+	requestModel := Request{}
+
+	isDDOS := m.classifier.IsRequestPotentialDDOS(ctx, &requestModel)
+
+	return isDDOS, nil
 }

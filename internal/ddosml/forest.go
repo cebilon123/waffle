@@ -30,7 +30,7 @@ func newRandomForestClassifier() *randomForestClassifier {
 	}
 }
 
-// AddNewClassifierModel adds new Request to the randomForestClassifier.
+// EnhanceClassifierWithRequest adds new Request to the randomForestClassifier.
 // The trees are regenerated in order to increase decision success.
 func (r *randomForestClassifier) EnhanceClassifierWithRequest(m *Request) {
 	r.mu.Lock()
