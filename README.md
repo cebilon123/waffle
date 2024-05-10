@@ -1,12 +1,16 @@
-# WAFFLE
+<h1 style="text-align: center" align="center">🛡WAFFLE🛡</h1>
 
-We have a discord, come and join:
-https://discord.gg/kNfZzCx7se
-<div align="center">
+[//]: # (We have a discord, come and join:)
 
-  <img src="readme/gifs/logo.gif" alt="drawing" width="400" class="logo"/>
+[//]: # (https://discord.gg/kNfZzCx7se)
 
-</div>
+[//]: # (<div align="center">)
+
+[//]: # ()
+[//]: # (  <img src="readme/gifs/logo.gif" alt="drawing" width="400" class="logo"/>)
+
+[//]: # ()
+[//]: # (</div>)
 
 ---
 
