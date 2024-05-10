@@ -10,6 +10,35 @@ https://discord.gg/kNfZzCx7se
 
 ---
 
+[//]: # (the problem)
+<h1>❗ The problem</h1>
+<div style="display: flex; justify-content: space-between">
+    <p style="width: 30%">
+        Imagine, you are normal user who wants to play a game, or use a website on remote server, but something isn't right,
+        the connection is so slow, and you don't know why. You are probably mad, because you can't watch your favorite
+        cat videos and images. Anime is out of your reach as well, you are thinking about eating pizza from <b>Da Grasso</b> 🐴
+        to make your day just a little bit better.
+    </p>
+    <div>
+        <img src="readme/gifs/ddos_attack.gif"alt="drawing" width="500" class="logo"/>
+    </div>
+</div>
+
+---
+
+[//]: # (the solution)
+<h1 style="text-align: right">💚 The solution</h1>
+
+
+<div style="display: flex; justify-content: space-between">
+    <div>
+        <img src="readme/gifs/ddos_defence.gif"alt="drawing" width="500" class="logo"/>
+    </div>
+    <p style="width: 30%">
+        You wrote to the website administrator to use <b>Waffle</b>, the <b>open-source</b> DDOS protector, the reverse
+        proxy of future, the strongest defense of all, and it's free! 
+    </p>
+</div>
 
 ## Documentation
 This is github wiki's based documentation of the project (in progress):
