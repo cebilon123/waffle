@@ -4,13 +4,13 @@
 
 [//]: # (https://discord.gg/kNfZzCx7se)
 
-[//]: # (<div align="center">)
+<div align="center">
 
-[//]: # ()
-[//]: # (  <img src="readme/gifs/logo.gif" alt="drawing" width="400" class="logo"/>)
 
-[//]: # ()
-[//]: # (</div>)
+  <img src="readme/gifs/logo.gif" alt="drawing" width="400" class="logo"/>
+
+
+</div>
 
 ---
 
