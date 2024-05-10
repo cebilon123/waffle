@@ -19,7 +19,7 @@ https://discord.gg/kNfZzCx7se
         cat videos and images. Anime is out of your reach as well, you are thinking about eating pizza from <b>Da Grasso</b> 🐴
         to make your day just a little bit better.
     </p>
-    <div>
+    <div align="center">
         <img src="readme/gifs/ddos_attack.gif"alt="drawing" width="500" class="logo"/>
     </div>
 </div>
@@ -31,8 +31,8 @@ https://discord.gg/kNfZzCx7se
 
 
 <div style="display: flex; justify-content: space-between">
-    <div>
-        <img src="readme/gifs/ddos_defence.gif"alt="drawing" width="500" class="logo"/>
+    <div align="center">
+        <img src="readme/gifs/ddos_defence.gif" alt="drawing" width="500" class="logo"/>
     </div>
     <p style="width: 30%">
         You wrote to the website administrator to use <b>Waffle</b>, the <b>open-source</b> DDOS protector, the reverse
