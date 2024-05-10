@@ -4,7 +4,7 @@ We have a discord, come and join:
 https://discord.gg/kNfZzCx7se
 <div align="center">
 
-  <img src="readme/waffle.png" alt="drawing" width="400" class="logo"/>
+  <img src="readme/gifs/logo.gif" alt="drawing" width="400" class="logo"/>
 
 </div>
 
