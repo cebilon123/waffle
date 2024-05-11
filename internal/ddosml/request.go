@@ -1,7 +1,25 @@
 package ddosml
 
+import "io"
+
+// Request struct represents http request
+// in the more "readable" format in order
+// to work with that with ML.
 type Request struct {
-	IsDDOS bool
+	IsDDOS           bool
+	Method           string
+	URL              string
+	Protocol         string
+	ProtocolMajor    int
+	ProtocolMinor    int
+	Headers          map[string]any
+	Body             io.ReadCloser
+	ContentLength    int64
+	TransferEncoding []string
+	Host             string
+	Form             map[string][]string
+	RemoteAddress    string
+	RequestURI       string
 }
 
 // data method returns slice of float64 representation of
