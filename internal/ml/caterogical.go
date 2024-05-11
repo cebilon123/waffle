@@ -36,8 +36,20 @@ func (c *CategoricalToNumericConverter[T]) Convert(obj T) []float64 {
 	defer c.mu.Unlock()
 
 	var wg sync.WaitGroup
-	for i := range c.convertRoutinesCount {
 
+	resultChan := make(chan map[string]any)
+
+	go func() {
+		wg.Wait()
+
+		close(resultChan)
+	}()
+
+	for range c.convertRoutinesCount {
+		wg.Add(1)
+		go func() {
+
+		}()
 	}
 
 }
