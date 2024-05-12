@@ -47,9 +47,5 @@ func (c *CategoricalToNumericConverter[T]) Convert(obj T) []float64 {
 
 	for range c.convertRoutinesCount {
 		wg.Add(1)
-		go func() {
-
-		}()
 	}
-
 }
