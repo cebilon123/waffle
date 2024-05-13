@@ -14,6 +14,7 @@ require (
 )
 
 require (
+	github.com/cdipaolo/goml v0.0.0-20220715001353-00e0c845ae1c // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
@@ -21,6 +22,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sjwhitworth/golearn v0.0.0-20221228163002-74ae077eafb2 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
