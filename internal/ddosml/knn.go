@@ -3,9 +3,10 @@ package ddosml
 import (
 	"context"
 	"fmt"
-	"github.com/cdipaolo/goml/base"
 	"io"
 	"math"
+
+	"github.com/cdipaolo/goml/base"
 )
 
 type knnClassifier struct {
