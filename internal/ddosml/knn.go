@@ -5,24 +5,34 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"sync"
 
 	"github.com/cdipaolo/goml/base"
 )
 
-type knnClassifier struct {
+type KnnClassifier struct {
+	knn *knn
+
+	mu sync.Mutex
 }
 
-func (k *knnClassifier) EnhanceClassifierWithRequest(m *Request) {
+func NewKNNClassifier() *KnnClassifier {
+	return &KnnClassifier{
+		knn: &knn{},
+	}
+}
+
+func (k *KnnClassifier) EnhanceClassifierWithRequest(m *Request) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (k *knnClassifier) IsRequestPotentialDDOS(ctx context.Context, m *Request) bool {
+func (k *KnnClassifier) IsRequestPotentialDDOS(ctx context.Context, m *Request) bool {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (k *knnClassifier) Write(writer io.Writer) error {
+func (k *KnnClassifier) Write(writer io.Writer) error {
 	//TODO implement me
 	panic("implement me")
 }
