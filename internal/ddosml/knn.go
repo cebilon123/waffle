@@ -23,8 +23,10 @@ func NewKNNClassifier() *KnnClassifier {
 }
 
 func (k *KnnClassifier) EnhanceClassifierWithRequest(m *Request) {
-	//TODO implement me
-	panic("implement me")
+	k.mu.Lock()
+	defer k.mu.Unlock()
+
+	k.knn.UpdateTrainingSet()
 }
 
 func (k *KnnClassifier) IsRequestPotentialDDOS(ctx context.Context, m *Request) bool {
