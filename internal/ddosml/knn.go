@@ -26,7 +26,7 @@ func (k *KnnClassifier) EnhanceClassifierWithRequest(m *Request) {
 	k.mu.Lock()
 	defer k.mu.Unlock()
 
-	//	k.knn.UpdateTrainingSet()
+	//	k.knn.UpdateTrainingSet() //
 }
 
 func (k *KnnClassifier) IsRequestPotentialDDOS(ctx context.Context, m *Request) bool {
