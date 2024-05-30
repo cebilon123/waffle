@@ -18,7 +18,7 @@
 <h1>❗ The problem</h1>
 <div style="display: flex; justify-content: space-between">
     <p style="width: 30%">
-        Imagine, you are normal user who wants to play a game, or use a website on remote server, but something isn't right,
+        Imagine, that you are normal user who wants to play a game, or use a website on remote server, but something isn't right,
         the connection is so slow, and you don't know why. You are probably mad, because you can't watch your favorite
         cat videos and images. Anime is out of your reach as well, you are thinking about eating pizza from tasty <b>Da Grasso</b> 🐴
         to make your day just a little bit better.
