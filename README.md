@@ -15,7 +15,7 @@
 ---
 
 [//]: # (the problem)
-<h1>❗ The problem</h1>
+<h1>❗ The problem </h1>
 <div style="display: flex; justify-content: space-between">
     <p style="width: 30%">
         Imagine, that you are normal user who wants to play a game, or use a website on remote server, but something isn't right,
