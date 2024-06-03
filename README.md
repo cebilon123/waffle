@@ -40,7 +40,7 @@
     </div>
     <p style="width: 30%">
         You wrote to the website administrator to use <b>Waffle</b>, the <b>open-source</b> DDOS protector, the reverse
-        proxy of future, the strongest defense of all, and it's free (and not nearly done)! 
+        proxy of future, the strongest defense of all, and it's free (and not nearly done at all)! 
     </p>
 </div>
 
