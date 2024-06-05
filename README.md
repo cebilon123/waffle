@@ -1,4 +1,4 @@
-<h1 style="text-align: center" align="center">🛡WAFFLE🛡</h1>
+<h1 style="text-align: center" align="center">WAFFLE</h1>
 
 [//]: # (We have a discord, come and join :)
 
