@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"embed"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -41,7 +42,7 @@ import (
 // If the proxy server fails to start, the function logs a fatal error.
 //
 // The function returns nil upon normal completion.
-func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) error {
+func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
 	_, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
@@ -67,18 +68,22 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 
 	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
 
-	visualizeServer := visualize.NewServer(":8081")
+	visualizeServerPort = fmt.Sprintf(":%s", visualizeServerPort)
+
+	s := visualize.NewServer(visualizeServerPort)
 
 	guardHandler := waf.NewHandler(
 		redirect.NewHandler(yamlDnsProvider),
 		defender,
 		limiter,
-		visualizeServer.GetVisualizer(),
+		s.GetVisualizer(),
 	)
 
-	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
+	proxyServerPort = fmt.Sprintf(":%s", proxyServerPort)
 
-	log.Println("Starting Waffle Proxy on port :8080 🚀")
+	proxyServer := proxy.NewServer(proxyServerPort, certificateProvider, guardHandler)
+
+	log.Printf("Starting Waffle Proxy on port %s 🚀\n", proxyServerPort)
 
 	if err := proxyServer.Start(); err != nil {
 		log.Fatal(err.Error())
