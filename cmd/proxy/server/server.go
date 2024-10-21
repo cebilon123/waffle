@@ -58,21 +58,20 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 
 	yamlDnsProvider := domain.NewYamlNameSystemProvider(yamlCfg)
 
-	caCerts, err := loadLocalCustomCACerts(certificates),
+	caCerts, err := loadLocalCustomCACerts(certificates)
 	if err != nil {
 		return err
 	}
 
-	certPemBlock, err := loadLocalCertPEMBlock(certificates),
+	certPemBlock, err := loadLocalCertPEMBlock(certificates)
 	if err != nil {
 		return err
 	}
 
-	keyPemBlock, err := loadLocalKeyPEMBlock(certificates),
+	keyPemBlock, err := loadLocalKeyPEMBlock(certificates)
 	if err != nil {
 		return err
 	}
-
 
 	certificateProvider := certificate.NewLocalCertificatesProvider(
 		caCerts,
