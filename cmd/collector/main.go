@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"time"
 	"waffle/internal/packet"
@@ -9,9 +10,16 @@ import (
 	"waffle/internal/worker"
 )
 
-const networkInterfaceDescription = "Intel(R) I211 Gigabit Network Connection"
+const (
+	defaultNetworkInterfaceDescription = "Intel(R) I211 Gigabit Network Connection"
+)
 
 func main() {
+	var (
+		networkInterface string
+	)
+	flag.StringVar(&networkInterface, "i", defaultNetworkInterfaceDescription, "Identification of the interface")
+
 	ctx := context.Background()
 
 	log.Println("starting collector")
@@ -26,7 +34,7 @@ func main() {
 
 	collector := worker.NewCollector(
 		cfg,
-		packet.NewWindowsNetworkInterfaceProvider(networkInterfaceDescription),
+		packet.NewWindowsNetworkInterfaceProvider(networkInterface),
 		inMemoryPacketSerializer)
 
 	if err := collector.Run(ctx); err != nil {

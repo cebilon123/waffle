@@ -47,6 +47,23 @@ func NewCollector(
 	}
 }
 
+// Run starts the packet capturing process for the Collector.
+// It retrieves the network interface using the netInterfaceProvider.
+// Then, it opens a live packet capture session on the interface using pcap, with a
+// specified snapshot length of 1600 bytes, setting the device to promiscuous mode
+// and waiting indefinitely for packets to arrive.
+//
+// If a BPF is provided in the configuration (c.cfg.BPF),
+// it applies the filter to capture only relevant packets.
+//
+// The packets are read using a gopacket PacketSource and passed through a channel
+// to be serialized by the Serializer in a separate goroutine.
+//
+// The function listens for packets in an infinite loop, and if the context is canceled
+// (signaling termination), it gracefully exits.
+//
+// Deferred actions ensure that the packet channel is closed and a log message is generated
+// when the collector is closed.
 func (c *Collector) Run(ctx context.Context) error {
 	netInterface, err := c.netInterfaceProvider.GetNetworkInterface()
 	if err != nil {
