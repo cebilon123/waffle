@@ -91,7 +91,7 @@ func (c *Collector) Run(ctx context.Context) error {
 
 	go func() {
 		if err := c.serializer.SerializePackets(ctx, packetsChan); err != nil {
-			log.Println("error in serialize packets")
+			log.Printf("Error in serialize packets: %v\n", err)
 		}
 	}()
 
@@ -99,7 +99,7 @@ func (c *Collector) Run(ctx context.Context) error {
 		select {
 		case packet, ok := <-packetSource.Packets():
 			if !ok {
-				log.Println("error reading packet")
+				log.Printf("Error while reading packet: %v\n", err)
 			}
 
 			packetsChan <- packet
