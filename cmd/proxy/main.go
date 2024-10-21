@@ -4,9 +4,8 @@ import (
 	"context"
 	"embed"
 	_ "embed"
-	"fmt"
-	"os"
-	
+	"flag"
+	"log"
 	"waffle/cmd/proxy/server"
 )
 
@@ -17,9 +16,15 @@ var yamlConfigBytes []byte
 var certificates embed.FS
 
 func main() {
+	var (
+		visualizeServerPort string
+		proxyServerPort     string
+	)
+	flag.StringVar(&visualizeServerPort, "p", "8081", "Port for server to listen on")
+	flag.StringVar(&proxyServerPort, "p", "8081", "Port for server to listen on")
+
 	ctx := context.Background()
-	if err := server.Run(ctx, yamlConfigBytes, certificates); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+	if err := server.Run(ctx, proxyServerPort, visualizeServerPort, yamlConfigBytes, certificates); err != nil {
+		log.Fatalln(err)
 	}
 }

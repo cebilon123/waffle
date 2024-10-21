@@ -3,8 +3,6 @@ package ratelimit
 import (
 	"net"
 	"time"
-
-	"waffle/internal/clock"
 )
 
 type Rate struct {
@@ -14,5 +12,5 @@ type Rate struct {
 }
 
 func (r *Rate) IsLimited() bool {
-	return clock.Now().Before(r.LimitedUntil)
+	return time.Now().Before(r.LimitedUntil)
 }

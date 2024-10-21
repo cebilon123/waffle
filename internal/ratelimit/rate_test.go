@@ -4,13 +4,11 @@ import (
 	"net"
 	"testing"
 	"time"
-
-	"waffle/internal/clock"
 )
 
 func TestRate_IsLimited(t *testing.T) {
-	limitedUntilBefore := clock.Now().Add(time.Duration(-1) * time.Hour)
-	limitedUntilAfter := clock.Now().Add(time.Hour)
+	limitedUntilBefore := time.Now().Add(time.Duration(-1) * time.Hour)
+	limitedUntilAfter := time.Now().Add(time.Hour)
 
 	type fields struct {
 		UUID         string

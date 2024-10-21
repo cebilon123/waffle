@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"embed"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -41,7 +42,7 @@ import (
 // If the proxy server fails to start, the function logs a fatal error.
 //
 // The function returns nil upon normal completion.
-func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) error {
+func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
 	_, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
@@ -57,28 +58,47 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 
 	yamlDnsProvider := domain.NewYamlNameSystemProvider(yamlCfg)
 
+	caCerts, err := loadLocalCustomCACerts(certificates)
+	if err != nil {
+		return err
+	}
+
+	certPemBlock, err := loadLocalCertPEMBlock(certificates)
+	if err != nil {
+		return err
+	}
+
+	keyPemBlock, err := loadLocalKeyPEMBlock(certificates)
+	if err != nil {
+		return err
+	}
+
 	certificateProvider := certificate.NewLocalCertificatesProvider(
-		loadLocalCustomCACerts(certificates),
-		loadLocalCertPEMBlock(certificates),
-		loadLocalKeyPEMBlock(certificates),
+		caCerts,
+		certPemBlock,
+		keyPemBlock,
 	)
 
 	defender := guard.NewDefenseCoordinator([]guard.Defender{&guard.XSS{}})
 
 	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
 
-	visualizeServer := visualize.NewServer(":8081")
+	visualizeServerPort = fmt.Sprintf(":%s", visualizeServerPort)
+
+	s := visualize.NewServer(visualizeServerPort)
 
 	guardHandler := waf.NewHandler(
 		redirect.NewHandler(yamlDnsProvider),
 		defender,
 		limiter,
-		visualizeServer.GetVisualizer(),
+		s.GetVisualizer(),
 	)
 
-	proxyServer := proxy.NewServer(":8080", certificateProvider, guardHandler)
+	proxyServerPort = fmt.Sprintf(":%s", proxyServerPort)
 
-	log.Println("Starting Waffle Proxy on port :8080 🚀")
+	proxyServer := proxy.NewServer(proxyServerPort, certificateProvider, guardHandler)
+
+	log.Printf("Starting Waffle Proxy on port %s 🚀\n", proxyServerPort)
 
 	if err := proxyServer.Start(); err != nil {
 		log.Fatal(err.Error())
@@ -90,21 +110,30 @@ func Run(ctx context.Context, yamlConfigBytes []byte, certificates embed.FS) err
 // loadLocalCustomCACerts reads the local custom CA certificates from the embedded file system.
 // It reads the CA certificate file (ca.crt) located in the ".cert" directory and returns it as a slice of byte slices.
 // This CA certificate is used for establishing trust during TLS/SSL handshakes.
-func loadLocalCustomCACerts(certificates embed.FS) [][]byte {
-	certBytes, _ := certificates.ReadFile(".cert/ca.crt")
-	return [][]byte{certBytes}
+func loadLocalCustomCACerts(certificates embed.FS) ([][]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/ca.crt")
+	if err != nil {
+		return nil, err
+	}
+	return [][]byte{certBytes}, nil
 }
 
 // loadLocalCertPEMBlock reads the local server certificate (server.crt) from the embedded file system.
 // It returns the certificate as a byte slice, which is later used to serve the server's public certificate in TLS/SSL connections.
-func loadLocalCertPEMBlock(certificates embed.FS) []byte {
-	certBytes, _ := certificates.ReadFile(".cert/server.crt")
-	return certBytes
+func loadLocalCertPEMBlock(certificates embed.FS) ([]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/server.crt")
+	if err != nil {
+		return nil, err
+	}
+	return certBytes, nil
 }
 
 // loadLocalKeyPEMBlock reads the private key (server.key) from the embedded file system.
 // It returns the private key as a byte slice, which is paired with the server certificate during TLS/SSL handshakes.
-func loadLocalKeyPEMBlock(certificates embed.FS) []byte {
-	certBytes, _ := certificates.ReadFile(".cert/server.key")
-	return certBytes
+func loadLocalKeyPEMBlock(certificates embed.FS) ([]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/server.key")
+	if err != nil {
+		return nil, err
+	}
+	return certBytes, nil
 }
