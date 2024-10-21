@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: waffle-svc
+  namespace: waffle
+spec:
+  type: ClusterIP
+  selector:
+    app: go-gator
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
