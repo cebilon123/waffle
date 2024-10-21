@@ -5,9 +5,7 @@ import (
 	"embed"
 	_ "embed"
 	"flag"
-	"fmt"
-	"os"
-
+	"log"
 	"waffle/cmd/proxy/server"
 )
 
@@ -27,7 +25,6 @@ func main() {
 
 	ctx := context.Background()
 	if err := server.Run(ctx, proxyServerPort, visualizeServerPort, yamlConfigBytes, certificates); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 }
