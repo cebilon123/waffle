@@ -58,10 +58,26 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 
 	yamlDnsProvider := domain.NewYamlNameSystemProvider(yamlCfg)
 
+	caCerts, err := loadLocalCustomCACerts(certificates),
+	if err != nil {
+		return err
+	}
+
+	certPemBlock, err := loadLocalCertPEMBlock(certificates),
+	if err != nil {
+		return err
+	}
+
+	keyPemBlock, err := loadLocalKeyPEMBlock(certificates),
+	if err != nil {
+		return err
+	}
+
+
 	certificateProvider := certificate.NewLocalCertificatesProvider(
-		loadLocalCustomCACerts(certificates),
-		loadLocalCertPEMBlock(certificates),
-		loadLocalKeyPEMBlock(certificates),
+		caCerts,
+		certPemBlock,
+		keyPemBlock,
 	)
 
 	defender := guard.NewDefenseCoordinator([]guard.Defender{&guard.XSS{}})
@@ -95,21 +111,30 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 // loadLocalCustomCACerts reads the local custom CA certificates from the embedded file system.
 // It reads the CA certificate file (ca.crt) located in the ".cert" directory and returns it as a slice of byte slices.
 // This CA certificate is used for establishing trust during TLS/SSL handshakes.
-func loadLocalCustomCACerts(certificates embed.FS) [][]byte {
-	certBytes, _ := certificates.ReadFile(".cert/ca.crt")
-	return [][]byte{certBytes}
+func loadLocalCustomCACerts(certificates embed.FS) ([][]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/ca.crt")
+	if err != nil {
+		return nil, err
+	}
+	return [][]byte{certBytes}, nil
 }
 
 // loadLocalCertPEMBlock reads the local server certificate (server.crt) from the embedded file system.
 // It returns the certificate as a byte slice, which is later used to serve the server's public certificate in TLS/SSL connections.
-func loadLocalCertPEMBlock(certificates embed.FS) []byte {
-	certBytes, _ := certificates.ReadFile(".cert/server.crt")
-	return certBytes
+func loadLocalCertPEMBlock(certificates embed.FS) ([]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/server.crt")
+	if err != nil {
+		return nil, err
+	}
+	return certBytes, nil
 }
 
 // loadLocalKeyPEMBlock reads the private key (server.key) from the embedded file system.
 // It returns the private key as a byte slice, which is paired with the server certificate during TLS/SSL handshakes.
-func loadLocalKeyPEMBlock(certificates embed.FS) []byte {
-	certBytes, _ := certificates.ReadFile(".cert/server.key")
-	return certBytes
+func loadLocalKeyPEMBlock(certificates embed.FS) ([]byte, error) {
+	certBytes, err := certificates.ReadFile(".cert/server.key")
+	if err != nil {
+		return nil, err
+	}
+	return certBytes, nil
 }
