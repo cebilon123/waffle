@@ -67,7 +67,7 @@ func NewCollector(
 //
 // Deferred actions ensure that the packet channel is closed and a log message is generated
 // when the collector is closed
-func (c *Collector) Run(ctx context.Context) error {
+func (c *Collector) Run() error {
 	netInterface, err := c.netInterfaceProvider.GetNetworkInterface()
 	if err != nil {
 		return fmt.Errorf("get network interface using net interface provider: %w", err)
@@ -89,12 +89,12 @@ func (c *Collector) Run(ctx context.Context) error {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	defer func() {
 		close(packetsChan)
-		log.Println("collector closed")
+		log.Println("Collector closed")
 	}()
 
 	go func() {
@@ -109,7 +109,6 @@ func (c *Collector) Run(ctx context.Context) error {
 			log.Println("Received shutdown signal")
 			cancel()
 		case <-ctx.Done():
-
 		}
 	}()
 
