@@ -5,8 +5,6 @@ import (
 	"embed"
 	"fmt"
 	"log"
-	"os"
-	"os/signal"
 	"time"
 	"waffle/internal/visualize"
 
@@ -42,10 +40,7 @@ import (
 // If the proxy server fails to start, the function logs a fatal error.
 //
 // The function returns nil upon normal completion.
-func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
-	_, cancel := signal.NotifyContext(ctx, os.Interrupt)
-	defer cancel()
-
+func Run(proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
 	_, err := config.LoadEnvironmentConfig()
 	if err != nil {
 		log.Fatal(err.Error())
@@ -104,6 +99,11 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 		log.Fatal(err.Error())
 	}
 
+	return nil
+}
+
+// Shutdown is a function to be called while 'gracefully shutdowning' the server.
+func Shutdown(ctx context.Context) error {
 	return nil
 }
 

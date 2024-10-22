@@ -6,6 +6,9 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type PacketSerializer interface {
@@ -63,7 +66,7 @@ func NewCollector(
 // (signaling termination), it gracefully exits.
 //
 // Deferred actions ensure that the packet channel is closed and a log message is generated
-// when the collector is closed.
+// when the collector is closed
 func (c *Collector) Run(ctx context.Context) error {
 	netInterface, err := c.netInterfaceProvider.GetNetworkInterface()
 	if err != nil {
@@ -74,18 +77,23 @@ func (c *Collector) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("pcap open live: %w", err)
 	}
+	defer handle.Close()
 
 	if err := handle.SetBPFFilter(c.cfg.BPF); err != nil {
 		return fmt.Errorf("set BPF filter: %w", err)
 	}
 
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
-
 	packetsChan := make(chan gopacket.Packet)
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	defer func() {
 		close(packetsChan)
-
 		log.Println("collector closed")
 	}()
 
@@ -95,17 +103,27 @@ func (c *Collector) Run(ctx context.Context) error {
 		}
 	}()
 
+	go func() {
+		select {
+		case <-signalChan:
+			log.Println("Received shutdown signal")
+			cancel()
+		case <-ctx.Done():
+
+		}
+	}()
+
 	for {
 		select {
-		case packet, ok := <-packetSource.Packets():
-			if !ok {
-				log.Printf("Error while reading packet: %v\n", err)
-			}
-
-			packetsChan <- packet
-
 		case <-ctx.Done():
+			log.Println("Shutting down gracefully")
 			return nil
+		case packet := <-packetSource.Packets():
+			if packet == nil {
+				log.Println("No more packets to read, shutting down")
+				return nil
+			}
+			packetsChan <- packet
 		}
 	}
 }
