@@ -21,6 +21,9 @@ jobs:
       with:
         go-version: '1.22'
 
+    - name: Install pcap deps
+      run: apt install -y libpcap-dev
+
     - name: Download go.mod dependencies
       run: go mod download
 
