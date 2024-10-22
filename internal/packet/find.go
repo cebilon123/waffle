@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	// ErrNetworkInterfaceNotFound is an error which indicates  that network interface was not found
 	ErrNetworkInterfaceNotFound = errors.New("network interface not found")
 )
 
@@ -28,6 +29,9 @@ func NewWindowsNetworkInterfaceProvider(interfaceDescription string) *WindowsNet
 	return &WindowsNetworkInterfaceProvider{interfaceDescription: interfaceDescription}
 }
 
+// GetNetworkInterface retrieves all available interfaces, verifies if interface's description matches description
+// in interfaceDescription field of WindowsNetworkInterfaceProvider struct, and returns an interfaces which
+// suits that condition.
 func (w *WindowsNetworkInterfaceProvider) GetNetworkInterface() (*pcap.Interface, error) {
 	interfaces, err := pcap.FindAllDevs()
 	if err != nil {

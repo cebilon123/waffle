@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"time"
 	"waffle/internal/packet"
@@ -9,14 +10,25 @@ import (
 	"waffle/internal/worker"
 )
 
-const networkInterfaceDescription = "Intel(R) I211 Gigabit Network Connection"
+const (
+	defaultNetworkInterfaceDescription = "Intel(R) I211 Gigabit Network Connection"
+)
 
 func main() {
+	var (
+		networkInterface string
+	)
+	flag.StringVar(&networkInterface, "i", defaultNetworkInterfaceDescription, "Identification of the interface")
+
+	// question: Why do we need context here? It is not used in collector.Run, except of ctx.Done, but since it is not
+	// context.WithTimeout (as example) it can not be closed in any way.
+	// Same in c.serializer.SerializePackets(ctx, packetsChan), it can not be closed there as well.
+	// Why not just to remove it?
 	ctx := context.Background()
 
 	log.Println("starting collector")
 
-	inMemoryPacketSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
+	packetSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
 
 	// NEXT TODO: add BPF filter builder
 	// https://www.ibm.com/docs/en/qsip/7.4?topic=queries-berkeley-packet-filters
@@ -26,10 +38,10 @@ func main() {
 
 	collector := worker.NewCollector(
 		cfg,
-		packet.NewWindowsNetworkInterfaceProvider(networkInterfaceDescription),
-		inMemoryPacketSerializer)
+		packet.NewWindowsNetworkInterfaceProvider(networkInterface),
+		packetSerializer)
 
 	if err := collector.Run(ctx); err != nil {
-		panic(err.Error())
+		log.Fatalln("Error during running collector: ", err.Error())
 	}
 }
