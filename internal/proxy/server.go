@@ -61,12 +61,18 @@ var (
 	alpnProto = "acme-tls/1"
 )
 
+// Server represents an HTTP server that listens on a specific address.
+// It uses a certificate provider to manage TLS certificates and an HTTP handler to process incoming requests.
 type Server struct {
 	addr                string
 	certificateProvider certificate.Provider
 	handler             http.Handler
 }
 
+// NewServer initializes a new Server instance with the given address, certificate provider, and HTTP handler.
+// The address defines where the server will listen for incoming connections.
+// The certificateProvider is used to manage the TLS certificates for secure connections.
+// The handler (usually a redirect handler) will process HTTP requests that are received by the server.
 func NewServer(
 	addr string,
 	certificateProvider certificate.Provider,
@@ -79,6 +85,22 @@ func NewServer(
 	}
 }
 
+// Start initializes and starts the server with TLS configuration using the provided certificate provider.
+// It first retrieves the CA certificates pool and server TLS certificate from the certificate provider.
+// Then, it configures the server to use TLS 1.3, sets the allowed cipher suites, and prepares the server for
+// mutual TLS authentication (client certificates are verified if provided).
+//
+// A TCP listener is created to listen for incoming TLS connections on the specified address.
+//
+// The HTTP server is configured with various timeouts (read, write, idle), a maximum header size, and a custom error logger.
+// The server handles incoming requests using the provided handler.
+//
+// A graceful shutdown mechanism is implemented: when an interrupt signal is received (e.g., Ctrl+C),
+// the server begins shutting down by closing the active listener and processing any outstanding requests.
+//
+// The function waits for all idle connections to be closed before returning.
+//
+// If there is any error while starting or serving the server, the error is returned.
 func (s *Server) Start() error {
 	caCertPool, err := s.certificateProvider.GetCACertificatesPool()
 	if err != nil {

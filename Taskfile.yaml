@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+  certs_windows:
+    cmds:
+      - mkdir -p "./cmd/proxy/.cert"
+      - openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
+      - openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
+      - openssl x509 -req -sha256 -days 3650 -in ./cmd/proxy/.cert/ca.csr -signkey ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.crt
+      - openssl ecparam -out ./cmd/proxy/.cert/server.key -name prime256v1 -genkey
+      - openssl req -new -sha256 -key ./cmd/proxy/.cert/server.key -out ./cmd/proxy/.cert/server.csr
+      - openssl x509 -req -in ./cmd/proxy/.cert/server.csr -CA ./cmd/proxy/.cert/ca.crt -CAkey ./cmd/proxy/.cert/ca.key -CAcreateserial -out ./cmd/proxy/.cert/server.crt -days 3650 -sha256
+      - openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
+
+  certs:
+    cmds:
+      - mkdir -p "./cmd/proxy/.cert"
+      - openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
+      - openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
+      - openssl x509 -req -sha256 -days 3650 -in ./cmd/proxy/.cert/ca.csr -signkey ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.crt
+      - openssl ecparam -out ./cmd/proxy/.cert/server.key -name prime256v1 -genkey
+      - openssl req -new -sha256 -key ./cmd/proxy/.cert/server.key -out ./cmd/proxy/.cert/server.csr
+      - openssl x509 -req -in ./cmd/proxy/.cert/server.csr -CA ./cmd/proxy/.cert/ca.crt -CAkey ./cmd/proxy/.cert/ca.key -CAcreateserial -out ./cmd/proxy/.cert/server.crt -days 3650 -sha256
+      - openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
+
+  mocks:
+    cmds:
+      - mockery
+
+  docker-build:
+    cmds:
+      - docker build -t ${IMAGE_NAME} -f .\build\Dockerfile .
+
+  docker-push:
+    cmds:
+      - docker push ${IMAGE_NAME}

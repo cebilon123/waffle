@@ -48,7 +48,7 @@ func tcpDummy() error {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			return fmt.Errorf("liistener accept: %w", err)
+			return fmt.Errorf("listener accept: %w", err)
 		}
 
 		log.Println(conn)
