@@ -28,7 +28,7 @@ jobs:
       run: go mod download
 
     - name: Test waffle WAF
-      run: go test -v ./internal/...
+      run: go test -v ./...
 
     - name: Install go-task to build docker image
       run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
