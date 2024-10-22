@@ -166,3 +166,9 @@ func (s *Server) Start() error {
 
 	return nil
 }
+
+// Shutdown is a function which will be called when gracefully shutting down the server.
+func (s *Server) Shutdown(ctx context.Context) error {
+	log.Println("Server shut down gracefully")
+	return nil
+}

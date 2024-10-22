@@ -1,5 +1,8 @@
+IMAGE_NAME =? <USERNAME>/<IMAGE-NAME>:<IMAGE-TAG>
+
 certs_windows:
 	mkdir -p "./cmd/proxy/.cert"
+
 	# Create CA (certificate authority)
 	openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
 	openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
@@ -13,6 +16,7 @@ certs_windows:
 
 certs:
 	mkdir -p "./cmd/proxy/.cert"
+
 	# Create CA (certificate authority)
 	openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
 	openssl req -new -sha256 -key ./cmd/proxy/.cert/ca.key -out ./cmd/proxy/.cert/ca.csr
@@ -26,3 +30,9 @@ certs:
 
 mocks:
 	mockery
+
+docker-build:
+	docker build -t ${IMAGE_NAME} -f .\build\Dockerfile .
+
+docker-push:
+	docker push -t ${IMAGE_NAME} -f .\build\Dockerfile .

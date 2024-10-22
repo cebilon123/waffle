@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 	"time"
@@ -20,11 +19,9 @@ func main() {
 	)
 	flag.StringVar(&networkInterface, "i", defaultNetworkInterfaceDescription, "Identification of the interface")
 
-	ctx := context.Background()
-
 	log.Println("starting collector")
 
-	inMemoryPacketSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
+	packetSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
 
 	// NEXT TODO: add BPF filter builder
 	// https://www.ibm.com/docs/en/qsip/7.4?topic=queries-berkeley-packet-filters
@@ -35,9 +32,9 @@ func main() {
 	collector := worker.NewCollector(
 		cfg,
 		packet.NewWindowsNetworkInterfaceProvider(networkInterface),
-		inMemoryPacketSerializer)
+		packetSerializer)
 
-	if err := collector.Run(ctx); err != nil {
-		panic(err.Error())
+	if err := collector.Run(); err != nil {
+		log.Fatalln("Error during running collector: ", err.Error())
 	}
 }

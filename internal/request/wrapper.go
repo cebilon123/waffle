@@ -4,8 +4,6 @@ import (
 	"net"
 	"net/http"
 	"time"
-
-	"waffle/internal/clock"
 )
 
 // Wrapper is used to wrap request, in order to not pass it every time.
@@ -21,6 +19,6 @@ func NewRequestWrapper(r *http.Request, ipAddress *net.IP) *Wrapper {
 	return &Wrapper{
 		Request:   r,
 		IPAddress: ipAddress,
-		IssuedAt:  clock.Now(),
+		IssuedAt:  time.Now(),
 	}
 }
