@@ -83,6 +83,7 @@ func Run(proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, ce
 	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
 
 	visualizeServerPort = fmt.Sprintf(":%s", visualizeServerPort)
+
 	s := visualize.NewServer(visualizeServerPort)
 
 	guardHandler := waf.NewHandler(
