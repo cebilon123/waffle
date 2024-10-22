@@ -3,10 +3,13 @@ package server
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 	"waffle/internal/visualize"
 
@@ -42,10 +45,7 @@ import (
 // If the proxy server fails to start, the function logs a fatal error.
 //
 // The function returns nil upon normal completion.
-func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
-	_, cancel := signal.NotifyContext(ctx, os.Interrupt)
-	defer cancel()
-
+func Run(proxyServerPort, visualizeServerPort string, yamlConfigBytes []byte, certificates embed.FS) error {
 	_, err := config.LoadEnvironmentConfig()
 	if err != nil {
 		log.Fatal(err.Error())
@@ -80,11 +80,9 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 	)
 
 	defender := guard.NewDefenseCoordinator([]guard.Defender{&guard.XSS{}})
-
 	limiter := ratelimit.NewInMemoryLimiter(time.Minute * 5)
 
 	visualizeServerPort = fmt.Sprintf(":%s", visualizeServerPort)
-
 	s := visualize.NewServer(visualizeServerPort)
 
 	guardHandler := waf.NewHandler(
@@ -95,15 +93,44 @@ func Run(ctx context.Context, proxyServerPort, visualizeServerPort string, yamlC
 	)
 
 	proxyServerPort = fmt.Sprintf(":%s", proxyServerPort)
-
 	proxyServer := proxy.NewServer(proxyServerPort, certificateProvider, guardHandler)
 
 	log.Printf("Starting Waffle Proxy on port %s 🚀\n", proxyServerPort)
 
-	if err := proxyServer.Start(); err != nil {
-		log.Fatal(err.Error())
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() {
+		if err := proxyServer.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("Proxy server encountered an error: %v\n", err)
+		}
+	}()
+
+	select {
+	case sig := <-signalChan:
+		log.Printf("Received shutdown signal: %s, shutting down gracefully...", sig)
+		cancel()
+	case <-ctx.Done():
+		log.Println("Context canceled, shutting down...")
 	}
 
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	if err := proxyServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("Error during server shutdown: %v", err)
+	} else {
+		log.Println("Proxy server shut down gracefully.")
+	}
+
+	return nil
+}
+
+// Shutdown is a function to be called while 'gracefully shutdowning' the server.
+func Shutdown(ctx context.Context) error {
 	return nil
 }
 
