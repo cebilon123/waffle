@@ -1,5 +1,8 @@
 version: '3'
 
+env:
+  IMAGE_NAME: '{{ .IMAGE_NAME | default "qniw984/waffle:1.0.0" }}'
+
 tasks:
   certs_windows:
     cmds:
@@ -27,10 +30,10 @@ tasks:
     cmds:
       - mockery
 
-  docker-build:
+  dockerBuild:
     cmds:
-      - docker build -t ${IMAGE_NAME} -f .\build\Dockerfile .
+      - docker build -t {{ .IMAGE_NAME }] -f .\build\Dockerfile .
 
-  docker-push:
+  dockerPush:
     cmds:
-      - docker push ${IMAGE_NAME}
+      - docker push {{ .IMAGE_NAME }]
