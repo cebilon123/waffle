@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 	"time"
@@ -20,12 +19,6 @@ func main() {
 	)
 	flag.StringVar(&networkInterface, "i", defaultNetworkInterfaceDescription, "Identification of the interface")
 
-	// question: Why do we need context here? It is not used in collector.Run, except of ctx.Done, but since it is not
-	// context.WithTimeout (as example) it can not be closed in any way.
-	// Same in c.serializer.SerializePackets(ctx, packetsChan), it can not be closed there as well.
-	// Why not just to remove it?
-	ctx := context.Background()
-
 	log.Println("starting collector")
 
 	packetSerializer := packet.NewMemoryPacketSerializer(time.Minute * 5)
@@ -41,7 +34,7 @@ func main() {
 		packet.NewWindowsNetworkInterfaceProvider(networkInterface),
 		packetSerializer)
 
-	if err := collector.Run(ctx); err != nil {
+	if err := collector.Run(); err != nil {
 		log.Fatalln("Error during running collector: ", err.Error())
 	}
 }

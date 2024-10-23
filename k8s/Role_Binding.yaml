@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: go-gator-service-binding
+  namespace: go-gator
+subjects:
+  - kind: ServiceAccount
+    name: waffle-service
+    apiGroup: ""
+    namespace: waffle
+roleRef:
+  kind: Role
+  name: waffle-role
+  apiGroup: rbac.authorization.k8s.io
