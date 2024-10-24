@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waffle-deployment
+  namespace: waffle
+  labels:
+    app: waffle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waffle
+  template:
+    metadata:
+      labels:
+        app: waffle
+    spec:
+      serviceAccountName: waffle-sa
+      automountServiceAccountToken: false
+      containers:
+        - name: go-gator
+          image: qniw984/waffle:1.0.0
+          ports:
+            - containerPort: 443
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
