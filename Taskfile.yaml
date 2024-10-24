@@ -33,6 +33,11 @@ tasks:
     cmds:
       - mockery
 
+  build:
+    desc: "Build a project using Golang"
+    cmds:
+      - go build -o /out/app ./cmd/proxy
+
   dockerBuild:
     desc: "Build a Docker image using the specified Dockerfile and tag it with the provided image name."
     cmds:
