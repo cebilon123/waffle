@@ -24,7 +24,7 @@ func main() {
 		visualizeServerPort string
 		proxyServerPort     string
 	)
-	flag.StringVar(&visualizeServerPort, "p", "8081", "Port for server to listen on")
+	flag.StringVar(&visualizeServerPort, "vp", "8080", "Port for visualizer server to listen on")
 	flag.StringVar(&proxyServerPort, "p", "8081", "Port for server to listen on")
 
 	quit := make(chan os.Signal)
@@ -37,7 +37,8 @@ func main() {
 		}
 	}()
 
-	log.Println("Server started on :8080")
+	log.Println("Visualizer server started on ", visualizeServerPort)
+	log.Println("Proxy server started on ", proxyServerPort)
 
 	<-quit
 	log.Println("Shutdown signal received, shutting down gracefully...")
