@@ -34,4 +34,4 @@ jobs:
       run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
 
     - name: Build Waffle using Golang
-      run: task docker
+      run: task build
