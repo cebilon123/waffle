@@ -21,8 +21,17 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: Build
-      run: go build -v ./...
+    - name: Install pcap deps
+      run: sudo apt install -y libpcap-dev
 
-    - name: Test
+    - name: Download go.mod dependencies
+      run: go mod download
+
+    - name: Test waffle WAF
       run: go test -v ./...
+
+    - name: Install go-task to build docker image
+      run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
+
+    - name: Build Waffle using Golang
+      run: task build

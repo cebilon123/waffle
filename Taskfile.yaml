@@ -1,7 +1,11 @@
 version: '3'
 
+env:
+  IMAGE_NAME: '{{ .IMAGE_NAME | default "<YOUR-USERNAME>/<IMAGE-NAME>:<IMAGE-TAG>" }}'
+
 tasks:
   certs_windows:
+    desc: "Generate SSL certificates for Windows environment using OpenSSL, including CA and server certificates."
     cmds:
       - mkdir -p "./cmd/proxy/.cert"
       - openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
@@ -13,6 +17,7 @@ tasks:
       - openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
 
   certs:
+    desc: "Generate SSL certificates for non-Windows environments using OpenSSL, including CA and server certificates."
     cmds:
       - mkdir -p "./cmd/proxy/.cert"
       - openssl ecparam -out ./cmd/proxy/.cert/ca.key -name prime256v1 -genkey
@@ -24,13 +29,21 @@ tasks:
       - openssl x509 -in ./cmd/proxy/.cert/server.crt -text -noout
 
   mocks:
+    desc: "Generate mock implementations for testing using Mockery."
     cmds:
       - mockery
 
-  docker-build:
+  build:
+    desc: "Build a project using Golang"
     cmds:
-      - docker build -t ${IMAGE_NAME} -f .\build\Dockerfile .
+      - go build -o ./out/app ./cmd/proxy
 
-  docker-push:
+  dockerBuild:
+    desc: "Build a Docker image using the specified Dockerfile and tag it with the provided image name."
     cmds:
-      - docker push ${IMAGE_NAME}
+      - docker build -t {{ .IMAGE_NAME }} -f .\build\Dockerfile .
+
+  dockerPush:
+    desc: "Push the Docker image to the remote registry with the specified image name."
+    cmds:
+      - docker push {{ .IMAGE_NAME }}
